@@ -24,7 +24,6 @@ public class SkillRequirement implements Requirement
 	@Override
 	public boolean satisfiesRequirement(Client client)
 	{
-		log.debug("Real skill level: {} - passed level: {}", client.getRealSkillLevel(skill), level);
 		return client.getRealSkillLevel(skill) >= level;
 	}
 }

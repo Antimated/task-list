@@ -1,15 +1,13 @@
 package com.antimated.tasklist;
 
-import com.antimated.tasklist.requirements.SkillRequirement;
 import com.antimated.tasklist.requirements.SkillXpRequirement;
-import com.antimated.tasklist.requirements.TotalRequirement;
-import com.antimated.tasklist.requirements.TotalXpRequirement;
+import com.antimated.tasklist.tasks.AllSkillsTask;
+import com.antimated.tasklist.tasks.Task;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
-import net.runelite.api.Player;
 import net.runelite.api.Skill;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
@@ -66,14 +64,19 @@ public class TaskListPlugin extends Plugin
 	{
 		// Get initial stats, quests, equipment
 		if (fetchStats) {
-			Player player = client.getLocalPlayer();
 
-			SkillRequirement agilityRequirement = new SkillRequirement(Skill.AGILITY, 99);
+			Task allSkillsTo90 = new AllSkillsTask(90);
 
-			TotalRequirement totalLevelRequirement = new TotalRequirement(1200);
-			TotalXpRequirement totalXpRequirement = new TotalXpRequirement(300_000_000);
+			log.debug("Are all skills to lvl 90? {}", allSkillsTo90.satisfiesRequirements(client));
 
-			log.debug("Agility requirement: Current level: {}, Required level: {}, satisfiesRequirement: {}", client.getRealSkillLevel(Skill.AGILITY), agilityRequirement.getLevel(), agilityRequirement.satisfiesRequirement(client));
+//			Player player = client.getLocalPlayer();
+//
+//			SkillRequirement agilityRequirement = new SkillRequirement(Skill.AGILITY, 99);
+//
+//			TotalRequirement totalLevelRequirement = new TotalRequirement(1200);
+//			TotalXpRequirement totalXpRequirement = new TotalXpRequirement(300_000_000);
+//
+//			log.debug("Agility requirement: Current level: {}, Required level: {}, satisfiesRequirement: {}", client.getRealSkillLevel(Skill.AGILITY), agilityRequirement.getLevel(), agilityRequirement.satisfiesRequirement(client));
 //			log.debug("Herblore requirement: Current xp: {}, Required xp: {}, satisfiesRequirement: {}", client.getSkillExperience(Skill.HERBLORE), herbloreXpRequirement.getXp(), herbloreXpRequirement.satisfiesRequirement(client));
 //			log.debug("Total level requirement: Current level: {}, Required level: {}, satisfiesRequirement: {}", client.getTotalLevel(), totalLevelRequirement.getTotalLevel(), totalLevelRequirement.satisfiesRequirement(client));
 //			log.debug("Total xp requirement: Current total xp: TODO, Required total xp: {}, satisfiesRequirement: {}", totalXpRequirement.getTotalXp(), totalXpRequirement.satisfiesRequirement(client));
@@ -87,15 +90,14 @@ public class TaskListPlugin extends Plugin
 			return;
 		}
 
-		if (statChanged.getSkill() == Skill.HERBLORE) {
-
-			if(herbloreXpRequirement.satisfiesRequirement(client))
-			{
-				log.debug("Herblore requirement passed, now dont trigger anymore ktnxbye");
-			} else {
-				log.debug("Herblore xp requirement not met, still need {} xp", herbloreXpRequirement.getXp() - client.getSkillExperience(Skill.HERBLORE));
-			}
-		}
+//		if (statChanged.getSkill() == Skill.HERBLORE) {
+//			if(herbloreXpRequirement.satisfiesRequirement(client))
+//			{
+//				log.debug("Herblore requirement passed, now dont trigger anymore ktnxbye");
+//			} else {
+//				log.debug("Herblore xp requirement not met, still need {} xp", herbloreXpRequirement.getXp() - client.getSkillExperience(Skill.HERBLORE));
+//			}
+//		}
 
 //		log.debug("Changed stat: {}", statChanged.toString());
 //		SkillRequirement agilityReq = new SkillRequirement(Skill.AGILITY, 80);
