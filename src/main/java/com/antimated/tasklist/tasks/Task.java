@@ -1,37 +1,27 @@
 package com.antimated.tasklist.tasks;
 
 import com.antimated.tasklist.requirements.Requirement;
-import java.util.List;
-import net.runelite.api.Client;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
-public abstract class Task
+@Slf4j
+@Getter
+@Setter
+public class Task
 {
-	private final String title;
+	private final TaskType type;
+	private final TaskTier tier;
+	private final String description;
+	private final Requirement requirement;
+	private boolean completed;
 
-	private final List<Requirement> requirements;
-
-	public Task(String title, List<Requirement> requirements)
+	public Task(TaskType type, TaskTier tier, String description, Requirement requirement, boolean completed)
 	{
-		this.title = title;
-		this.requirements = requirements;
-	}
-
-	public String getTitle()
-	{
-		return title;
-	}
-
-	public List<Requirement> getRequirements()
-	{
-		return requirements;
-	}
-
-	public boolean satisfiesRequirements(Client client) {
-		for (Requirement requirement : requirements) {
-			if (!requirement.satisfiesRequirement(client)) {
-				return false; // If any requirement is not met, return false
-			}
-		}
-		return true; // All requirements are met
+		this.type = type;
+		this.tier = tier;
+		this.description = description;
+		this.requirement = requirement;
+		this.completed = completed;
 	}
 }

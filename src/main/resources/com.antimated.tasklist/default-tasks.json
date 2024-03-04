@@ -1,0 +1,30 @@
+[
+  {
+    "description": "Get level 60 in all skills",
+    "tier": "EASY",
+    "requirement": {
+      "type": "ALL_SKILL_LEVELS",
+      "level": 60
+    },
+    "completed": false
+  },
+  {
+    "description": "Get level 50 in Attack",
+    "tier": "EASY",
+    "requirement": {
+      "type": "SKILL_LEVEL",
+      "skill": "ATTACK",
+      "level": 60
+    },
+    "completed": false
+  },
+  {
+    "description": "Get level 1200 total",
+    "tier": "EASY",
+    "requirement": {
+      "type": "TOTAL_LEVEL",
+      "totalLevel": 1200
+    },
+    "completed": false
+  }
+]

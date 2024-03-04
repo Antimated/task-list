@@ -8,7 +8,7 @@ import net.runelite.api.Client;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class TotalRequirement implements Requirement
+public class TotalLevelRequirement implements Requirement
 {
 	private final int totalLevel;
 

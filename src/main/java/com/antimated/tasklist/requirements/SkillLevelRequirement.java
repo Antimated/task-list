@@ -9,37 +9,36 @@ import net.runelite.api.Skill;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class SkillXpRequirement implements Requirement
+public class SkillLevelRequirement implements Requirement
 {
 	private final Skill skill;
 
-	private final int xp;
+	private final int level;
 
-	private final boolean anyXp;
+	private final boolean anySkill;
 
 	@Override
 	public String toString()
 	{
-		return anyXp ? "Any skill xp " + xp : xp + " " + skill.getName();
+		return anySkill ? "Any skill level " + level : level + " " + skill.getName();
 	}
 
 	@Override
 	public boolean satisfiesRequirement(Client client)
 	{
-		// Check if there is any skill with the required xp
-		if (anyXp)
+		if (anySkill)
 		{
+			// Check if there is any skill with the required level
 			for (Skill s : Skill.values())
 			{
-				if (client.getSkillExperience(s) >= xp)
+				if (client.getRealSkillLevel(s) >= level)
 				{
 					return true;
 				}
 			}
-
 			return false;
 		}
 
-		return client.getSkillExperience(skill) >= xp;
+		return client.getRealSkillLevel(skill) >= level;
 	}
 }

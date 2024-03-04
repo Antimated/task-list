@@ -9,21 +9,28 @@ import net.runelite.api.Skill;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class SkillRequirement implements Requirement
+public class AllSkillLevelRequirement implements Requirement
 {
-	private final Skill skill;
-
 	private final int level;
 
 	@Override
 	public String toString()
 	{
-		return level + " " + skill.getName();
+		return "Level " + level + " in all skills";
 	}
+
 
 	@Override
 	public boolean satisfiesRequirement(Client client)
 	{
-		return client.getRealSkillLevel(skill) >= level;
+		// Check if the specified level is achieved in all skills
+		for (Skill skill : Skill.values())
+		{
+			if (client.getRealSkillLevel(skill) < level)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 }
