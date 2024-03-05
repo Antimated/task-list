@@ -1,5 +1,8 @@
 package com.antimated.tasklist.tasks;
 
+import lombok.Getter;
+
+@Getter
 public enum TaskTier
 {
 	EASY("Easy", 10),
@@ -15,15 +18,5 @@ public enum TaskTier
 	{
 		this.name = name;
 		this.points = points;
-	}
-
-	public String getName()
-	{
-		return name;
-	}
-
-	public int getPoints()
-	{
-		return points;
 	}
 }
