@@ -17,14 +17,13 @@ public class AllSkillLevelRequirement implements Requirement
 	@Override
 	public String toString()
 	{
-		return "Level " + level + " in all skills";
+		return "Level " + level + " minimum in all skills";
 	}
 
 
 	@Override
 	public boolean satisfiesRequirement(Client client)
 	{
-		// Check if the specified level is achieved in all skills
 		for (Skill skill : Skill.values())
 		{
 			if (client.getRealSkillLevel(skill) < level)
@@ -32,6 +31,7 @@ public class AllSkillLevelRequirement implements Requirement
 				return false;
 			}
 		}
+		
 		return true;
 	}
 }

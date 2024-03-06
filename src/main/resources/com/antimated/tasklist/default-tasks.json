@@ -3,7 +3,7 @@
 	"id": 1,
 	"description": "Get level 60 in all skills",
 	"tier": "EASY",
-	"type": "ALL_SKILL_LEVELS",
+	"type": "ALL_SKILL_LEVEL",
 	"requirement": {
 	  "level": 60
 	},

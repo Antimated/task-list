@@ -94,6 +94,20 @@ public class TaskListManager
 			.collect(Collectors.toList());
 	}
 
+	public List<Task> getIncompleteTasks()
+	{
+		return tasks.stream()
+			.filter(task -> !task.isCompleted())
+			.collect(Collectors.toList());
+	}
+
+	public List<Task> getCompleteTasks()
+	{
+		return tasks.stream()
+			.filter(Task::isCompleted)
+			.collect(Collectors.toList());
+	}
+
 	@Subscribe
 	public void onGameTick(GameTick gameTick)
 	{

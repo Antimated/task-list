@@ -1,9 +1,14 @@
 package com.antimated.tasklist.json;
 
 import com.antimated.tasklist.requirements.AllSkillLevelRequirement;
+import com.antimated.tasklist.requirements.AllSkillXpRequirement;
+import com.antimated.tasklist.requirements.AnySkillLevelRequirement;
+import com.antimated.tasklist.requirements.AnySkillXpRequirement;
 import com.antimated.tasklist.requirements.Requirement;
 import com.antimated.tasklist.requirements.SkillLevelRequirement;
+import com.antimated.tasklist.requirements.SkillXpRequirement;
 import com.antimated.tasklist.requirements.TotalLevelRequirement;
+import com.antimated.tasklist.requirements.TotalXpRequirement;
 import com.antimated.tasklist.tasks.Task;
 import com.antimated.tasklist.tasks.TaskTier;
 import com.antimated.tasklist.tasks.TaskType;
@@ -38,12 +43,23 @@ public class TaskDeserializer implements JsonDeserializer<Task>
 	{
 		switch (type)
 		{
-			case ALL_SKILL_LEVELS:
-				return AllSkillLevelRequirement.class;
+			case ANY_SKILL_LEVEL:
+				return AnySkillLevelRequirement.class;
+			case ANY_SKILL_XP:
+				return AnySkillXpRequirement.class;
 			case SKILL_LEVEL:
 				return SkillLevelRequirement.class;
+			case SKILL_XP:
+				return SkillXpRequirement.class;
 			case TOTAL_LEVEL:
 				return TotalLevelRequirement.class;
+			case TOTAL_XP:
+				return TotalXpRequirement.class;
+			case ALL_SKILL_LEVEL:
+				return AllSkillLevelRequirement.class;
+			case ALL_SKILL_XP:
+				return AllSkillXpRequirement.class;
+
 			// Add cases for other types as needed
 			default:
 				throw new JsonParseException("Unsupported TaskType: " + type);
