@@ -46,20 +46,14 @@ public class TaskListPlugin extends Plugin
 	protected void startUp() throws Exception
 	{
 		log.info("Task list started!");
-		eventBus.register(taskListManager);
-		List<Task> tasks = taskListManager.loadTasks();
-
-		for (Task task : tasks)
-		{
-			log.debug("Task {}", task);
-		}
-//		log.debug("Default tasks loaded in startUp: {}", tasks);
+		taskListManager.startUp();
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
 		log.info("Task list stopped!");
+		taskListManager.shutDown();
 	}
 
 	@Subscribe

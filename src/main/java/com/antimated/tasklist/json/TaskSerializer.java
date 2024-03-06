@@ -17,13 +17,12 @@ public class TaskSerializer implements JsonSerializer<Task>
 
 		// Serialize common fields
 		jsonObject.addProperty("id", src.getId());
-		jsonObject.add("type", context.serialize(src.getType()));
-		jsonObject.add("tier", context.serialize(src.getTier()));
 		jsonObject.addProperty("description", src.getDescription());
-		jsonObject.addProperty("completed", src.isCompleted());
-
+		jsonObject.add("tier", context.serialize(src.getTier()));
+		jsonObject.add("type", context.serialize(src.getType()));
 		// Serialize the "requirement" field based on the "type" field
 		jsonObject.add("requirement", context.serialize(src.getRequirement()));
+		jsonObject.addProperty("completed", src.isCompleted());
 
 		return jsonObject;
 	}
