@@ -1,23 +1,21 @@
 package com.antimated.tasklist.tasks;
 
 import com.antimated.tasklist.requirements.Requirement;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.Data;
 
-@Slf4j
-@Getter
-@Setter
+@Data
 public class Task
 {
+	private final int id;
 	private final TaskType type;
 	private final TaskTier tier;
 	private final String description;
 	private final Requirement requirement;
 	private boolean completed;
 
-	public Task(TaskType type, TaskTier tier, String description, Requirement requirement, boolean completed)
+	public Task(int id, TaskType type, TaskTier tier, String description, Requirement requirement, boolean completed)
 	{
+		this.id = id;
 		this.type = type;
 		this.tier = tier;
 		this.description = description;

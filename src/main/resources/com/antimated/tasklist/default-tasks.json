@@ -1,30 +1,33 @@
 [
   {
-    "description": "Get level 60 in all skills",
-    "tier": "EASY",
-    "requirement": {
-      "type": "ALL_SKILL_LEVELS",
-      "level": 60
-    },
-    "completed": false
+	"id": 1,
+	"description": "Get level 60 in all skills",
+	"tier": "EASY",
+	"type": "ALL_SKILL_LEVELS",
+	"requirement": {
+	  "level": 60
+	},
+	"completed": false
   },
   {
-    "description": "Get level 50 in Attack",
-    "tier": "EASY",
-    "requirement": {
-      "type": "SKILL_LEVEL",
-      "skill": "ATTACK",
-      "level": 60
-    },
-    "completed": false
+	"id": 2,
+	"description": "Get level 50 in Attack",
+	"tier": "EASY",
+	"type": "SKILL_LEVEL",
+	"requirement": {
+	  "skill": "ATTACK",
+	  "level": 60
+	},
+	"completed": false
   },
   {
-    "description": "Get level 1200 total",
-    "tier": "EASY",
-    "requirement": {
-      "type": "TOTAL_LEVEL",
-      "totalLevel": 1200
-    },
-    "completed": false
+	"id": 3,
+	"description": "Get level 1200 total",
+	"tier": "EASY",
+	"type": "TOTAL_LEVEL",
+	"requirement": {
+	  "totalLevel": 1200
+	},
+	"completed": false
   }
 ]
