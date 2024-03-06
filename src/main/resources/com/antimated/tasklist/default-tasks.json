@@ -1,9 +1,9 @@
 [
   {
 	"id": 1,
-	"description": "Get level 60 in all skills",
+	"description": "Get level 60 in any skill",
 	"tier": "EASY",
-	"type": "ALL_SKILL_LEVEL",
+	"type": "ANY_SKILL_LEVEL",
 	"requirement": {
 	  "level": 60
 	},
@@ -11,6 +11,16 @@
   },
   {
 	"id": 2,
+	"description": "Get 20.000.000 xp in any skill",
+	"tier": "EASY",
+	"type": "ANY_SKILL_XP",
+	"requirement": {
+	  "xp": 20000000
+	},
+	"completed": false
+  },
+  {
+	"id": 3,
 	"description": "Get level 50 in Attack",
 	"tier": "EASY",
 	"type": "SKILL_LEVEL",
@@ -21,7 +31,7 @@
 	"completed": false
   },
   {
-	"id": 3,
+	"id": 4,
 	"description": "Get level 1200 total",
 	"tier": "EASY",
 	"type": "TOTAL_LEVEL",

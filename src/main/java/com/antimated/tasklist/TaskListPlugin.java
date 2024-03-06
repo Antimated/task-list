@@ -1,11 +1,10 @@
 package com.antimated.tasklist;
 
-import com.antimated.tasklist.requirements.AllSkillLevelRequirement;
+import com.antimated.tasklist.requirements.AllSkillLevelsRequirement;
 import com.antimated.tasklist.tasks.Task;
 import com.antimated.tasklist.tasks.TaskTier;
 import com.antimated.tasklist.tasks.TaskType;
 import com.google.inject.Provides;
-import java.util.List;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -71,7 +70,7 @@ public class TaskListPlugin extends Plugin
 		// Get initial stats, quests, equipment
 		if (fetchStats) {
 
-			Task task = new Task(0, TaskType.SKILL_LEVEL, TaskTier.EASY, "Get level 60 in all skills", new AllSkillLevelRequirement(60), false);
+			Task task = new Task(0, TaskType.SKILL_LEVEL, TaskTier.EASY, "Get level 60 in all skills", new AllSkillLevelsRequirement(60), false);
 
 			log.debug("{}", client.getLocalPlayer().getName());
 			log.debug("Type {} ", task.getType());

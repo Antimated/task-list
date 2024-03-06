@@ -2,7 +2,6 @@ package com.antimated.tasklist.requirements;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.Skill;
@@ -10,7 +9,7 @@ import net.runelite.api.Skill;
 @Slf4j
 @RequiredArgsConstructor
 @Getter
-public class AllSkillLevelRequirement implements Requirement
+public class AllSkillLevelsRequirement implements Requirement
 {
 	private final int level;
 
@@ -31,7 +30,7 @@ public class AllSkillLevelRequirement implements Requirement
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 }
