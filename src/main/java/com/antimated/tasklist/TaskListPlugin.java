@@ -1,9 +1,5 @@
 package com.antimated.tasklist;
 
-import com.antimated.tasklist.requirements.AllSkillLevelsRequirement;
-import com.antimated.tasklist.tasks.Task;
-import com.antimated.tasklist.tasks.TaskTier;
-import com.antimated.tasklist.tasks.TaskType;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -69,22 +65,6 @@ public class TaskListPlugin extends Plugin
 	{
 		// Get initial stats, quests, equipment
 		if (fetchStats) {
-
-			Task task = new Task(0, TaskType.SKILL_LEVEL, TaskTier.EASY, "Get level 60 in all skills", new AllSkillLevelsRequirement(60), false);
-
-			log.debug("{}", client.getLocalPlayer().getName());
-			log.debug("Type {} ", task.getType());
-			log.debug("Description {} ", task.getDescription());
-			log.debug("Tier {} ", task.getTier().getPoints());
-			log.debug("Is completed? {} ", task.isCompleted());
-
-			if (!task.isCompleted() && task.getRequirement().satisfiesRequirement(client)) {
-				task.setCompleted(true);
-				log.debug("Are all skill levels 60 or above? {} ", task.getRequirement().satisfiesRequirement(client));
-
-				log.debug("Completed? {}", task.isCompleted());
-			}
-
 			fetchStats = false;
 		}
 	}

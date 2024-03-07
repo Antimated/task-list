@@ -36,7 +36,17 @@
 	"tier": "EASY",
 	"type": "TOTAL_LEVEL",
 	"requirement": {
-	  "totalLevel": 1200
+	  "level": 1200
+	},
+	"completed": false
+  },
+  {
+	"id": 5,
+	"description": "Get 100.000.000 total xp",
+	"tier": "ELITE",
+	"type": "TOTAL_XP",
+	"requirement": {
+	  "xp": 100000000
 	},
 	"completed": false
   }

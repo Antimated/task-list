@@ -119,7 +119,11 @@ public class TaskListManager
 	{
 		eventBus.register(this);
 		tasks = loadTasks();
-		log.debug("Deserialized tasks {}", gson.toJson(tasks));
+
+		for (Task task: tasks)
+		{
+			log.debug("Task {}", task.toString());
+		}
 	}
 
 	public void shutDown()

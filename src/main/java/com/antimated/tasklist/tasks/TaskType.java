@@ -31,5 +31,4 @@ public enum TaskType
 		this.name = name;
 		this.requirementClass = requirementClass;
 	}
-
 }
