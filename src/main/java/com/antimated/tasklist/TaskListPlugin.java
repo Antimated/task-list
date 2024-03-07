@@ -35,7 +35,7 @@ public class TaskListPlugin extends Plugin
 	@Inject
 	private TaskListManager taskListManager;
 
-	private boolean fetchStats; // Variable set if stats are fetched
+	private boolean canFetchStats; // Variable set if stats are fetched
 
 	@Override
 	protected void startUp() throws Exception
@@ -56,7 +56,7 @@ public class TaskListPlugin extends Plugin
 	{
 		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
 		{
-			fetchStats = true;
+			canFetchStats = true;
 		}
 	}
 
@@ -64,8 +64,8 @@ public class TaskListPlugin extends Plugin
 	public void onGameTick(GameTick gameTick)
 	{
 		// Get initial stats, quests, equipment
-		if (fetchStats) {
-			fetchStats = false;
+		if (canFetchStats) {
+			canFetchStats = false;
 		}
 	}
 	@Subscribe

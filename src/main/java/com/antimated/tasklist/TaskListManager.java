@@ -4,6 +4,7 @@ import com.antimated.tasklist.json.TaskDeserializer;
 import com.antimated.tasklist.json.TaskSerializer;
 import com.antimated.tasklist.requirements.Requirement;
 import com.antimated.tasklist.tasks.Task;
+import com.antimated.tasklist.tasks.TaskList;
 import com.antimated.tasklist.tasks.TaskTier;
 import com.antimated.tasklist.tasks.TaskType;
 import com.google.gson.Gson;
@@ -15,9 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.Getter;
@@ -49,9 +48,9 @@ public class TaskListManager
 	private static final Type type = new TypeToken<List<Task>>(){}.getType();
 
 	@Getter
-	private List<Task> tasks;
+	private TaskList taskList;
 
-	public List<Task> loadTasks()
+	public void loadTasks()
 	{
 		gson = new GsonBuilder()
 			.registerTypeAdapter(Task.class, new TaskDeserializer())
@@ -63,49 +62,14 @@ public class TaskListManager
 			assert stream != null;
 			InputStreamReader definitionReader = new InputStreamReader(stream);
 
-			return gson.fromJson(definitionReader, type);
+			List<Task> tasks = gson.fromJson(definitionReader, type);
+
+			taskList = new TaskList(tasks);
 		}
 		catch (IOException e)
 		{
 			log.warn("Error loading default tasks", e);
 		}
-
-		return List.of();
-	}
-
-	public Task getTaskById(int id) {
-		return tasks.stream()
-			.filter(task -> task.getId() == id)
-			.findFirst()
-			.orElse(null);
-	}
-
-	public List<Task> getTasksByType(TaskType type)
-	{
-		return tasks.stream()
-			.filter(task -> task.getType() == type)
-			.collect(Collectors.toList());
-	}
-
-	public List<Task> getTasksByTier(TaskTier tier)
-	{
-		return tasks.stream()
-			.filter(task -> task.getTier() == tier)
-			.collect(Collectors.toList());
-	}
-
-	public List<Task> getIncompleteTasks()
-	{
-		return tasks.stream()
-			.filter(task -> !task.isCompleted())
-			.collect(Collectors.toList());
-	}
-
-	public List<Task> getCompleteTasks()
-	{
-		return tasks.stream()
-			.filter(Task::isCompleted)
-			.collect(Collectors.toList());
 	}
 
 	@Subscribe
@@ -118,17 +82,22 @@ public class TaskListManager
 	public void startUp()
 	{
 		eventBus.register(this);
-		tasks = loadTasks();
+		loadTasks();
 
-		for (Task task: tasks)
+		for (Task task: taskList.getTasks())
 		{
-			log.debug("Task {}", task.toString());
+			log.debug("All tasks {}", task.toString());
+		}
+
+		for (Task task: taskList.getTasksByTier(TaskTier.EASY))
+		{
+			log.debug("All {} tasks {}", TaskTier.EASY, task.toString());
 		}
 	}
 
 	public void shutDown()
 	{
 		eventBus.unregister(this);
-		tasks = List.of();
+		taskList = new TaskList(List.of());
 	}
 }

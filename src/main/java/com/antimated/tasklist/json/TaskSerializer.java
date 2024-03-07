@@ -7,22 +7,24 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class TaskSerializer implements JsonSerializer<Task>
 {
 	@Override
-	public JsonElement serialize(Task src, Type typeOfSrc, JsonSerializationContext context)
+	public JsonElement serialize(Task task, Type typeOfSrc, JsonSerializationContext context)
 	{
 		JsonObject jsonObject = new JsonObject();
 
 		// Serialize common fields
-		jsonObject.addProperty("id", src.getId());
-		jsonObject.addProperty("description", src.getDescription());
-		jsonObject.add("tier", context.serialize(src.getTier()));
-		jsonObject.add("type", context.serialize(src.getType()));
+		jsonObject.addProperty("id", task.getId());
+		jsonObject.addProperty("description", task.getDescription());
+		jsonObject.add("tier", context.serialize(task.getTier()));
+		jsonObject.add("type", context.serialize(task.getType()));
 		// Serialize the "requirement" field based on the "type" field
-		jsonObject.add("requirement", context.serialize(src.getRequirement()));
-		jsonObject.addProperty("completed", src.isCompleted());
+		jsonObject.add("requirement", context.serialize(task.getRequirement()));
+		jsonObject.addProperty("completed", task.isCompleted());
 
 		return jsonObject;
 	}
