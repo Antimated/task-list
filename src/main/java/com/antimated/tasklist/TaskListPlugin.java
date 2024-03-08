@@ -42,8 +42,6 @@ public class TaskListPlugin extends Plugin
 	@Inject
 	private ConfigManager configManager;
 
-	private boolean canFetchStats; // Variable set if stats are fetched
-
 	@Override
 	protected void startUp() throws Exception
 	{
@@ -56,63 +54,6 @@ public class TaskListPlugin extends Plugin
 	{
 		log.info("Task list stopped!");
 		taskListManager.shutDown();
-	}
-
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			canFetchStats = true;
-		}
-	}
-
-	@Subscribe
-	public void onGameTick(GameTick gameTick)
-	{
-		// Get initial stats, quests, equipment
-		if (canFetchStats) {
-			canFetchStats = false;
-
-			for (Task task: taskListManager.getTaskList().getTasksByTiers(TaskTier.ELITE).getTasksByCompletion(true).all())
-			{
-				log.debug("All incompleted hard tasks {}", task);
-			}
-
-			for (Task task: taskListManager.getTaskList().getTasksByTiers(TaskTier.EASY, TaskTier.HARD).getTasksByCompletion(false).all())
-			{
-				log.debug("All incompleted easy tasks {}", task);
-			}
-
-			for (Task task: taskListManager.getTaskList().getTasksByCompletion(false).getSatisfyingTasks(client).all())
-			{
-				task.complete(true);
-
-				log.debug("{}", task.isCompleted());
-			}
-
-			for (Task task: taskListManager.getTaskList().getTasksByCompletion(false).getSatisfyingTasks(client).all())
-			{
-				task.complete(true);
-
-				log.debug("Are they completed? {}", task);
-			}
-
-
-			for (Task task: taskListManager.getTaskList().all())
-			{
-				log.debug("All tasks again {}", task);
-			}
-		}
-	}
-	@Subscribe
-	public void onStatChanged(StatChanged statChanged)
-	{
-		if (statChanged == null) {
-			return;
-		}
-
-		log.debug("Stat changed");
 	}
 
 	@Provides
