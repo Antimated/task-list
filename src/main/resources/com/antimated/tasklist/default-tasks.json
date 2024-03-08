@@ -42,11 +42,11 @@
   },
   {
 	"id": 5,
-	"description": "Get 100.000.000 total xp",
+	"description": "Get 300.000.000 total xp",
 	"tier": "ELITE",
 	"type": "TOTAL_XP",
 	"requirement": {
-	  "xp": 100000000
+	  "xp": 300000000
 	},
 	"completed": false
   }

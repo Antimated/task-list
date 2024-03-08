@@ -2,16 +2,12 @@ package com.antimated.tasklist;
 
 import com.antimated.tasklist.json.TaskDeserializer;
 import com.antimated.tasklist.json.TaskSerializer;
-import com.antimated.tasklist.requirements.Requirement;
 import com.antimated.tasklist.tasks.Task;
 import com.antimated.tasklist.tasks.TaskList;
-import com.antimated.tasklist.tasks.TaskTier;
-import com.antimated.tasklist.tasks.TaskType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonStreamParser;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -23,9 +19,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.events.GameTick;
+import net.runelite.client.RuneLite;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ProfileChanged;
 
 @Slf4j
 @Singleton
@@ -44,6 +42,8 @@ public class TaskListManager
 	private Gson gson;
 
 	private static final String DEFAULT_TASKS_FILE = "default-tasks.json";
+
+	private static final File TASK_LIST_DIR = new File(RuneLite.RUNELITE_DIR, "task-list");
 
 	private static final Type type = new TypeToken<List<Task>>(){}.getType();
 
@@ -73,31 +73,24 @@ public class TaskListManager
 	}
 
 	@Subscribe
-	public void onGameTick(GameTick gameTick)
+	public void onProfileChanged(ProfileChanged e)
 	{
-//		log.debug("Gametick update inside TaskListManager.");
-//		log.debug("List of tasks {}", tasks);
+		log.debug("Profile changed!!!!!!!!");
+	}
+
+	public void clearTasks() {
+		taskList = new TaskList(List.of());
 	}
 
 	public void startUp()
 	{
 		eventBus.register(this);
 		loadTasks();
-
-		for (Task task: taskList.getTasks())
-		{
-			log.debug("All tasks {}", task.toString());
-		}
-
-		for (Task task: taskList.getTasksByTier(TaskTier.EASY))
-		{
-			log.debug("All {} tasks {}", TaskTier.EASY, task.toString());
-		}
 	}
 
 	public void shutDown()
 	{
 		eventBus.unregister(this);
-		taskList = new TaskList(List.of());
+		clearTasks();
 	}
 }
