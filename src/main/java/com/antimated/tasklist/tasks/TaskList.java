@@ -61,7 +61,6 @@ public class TaskList
 
 	public List<Task> all()
 	{
-		log.debug("Tasks in all() query: {}", this.tasks);
 		return this.tasks;
 	}
 }

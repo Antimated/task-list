@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,11 +25,9 @@ import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.RuneLite;
-import static net.runelite.client.RuneLite.SCREENSHOT_DIR;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.events.ProfileChanged;
 
 @Slf4j
 @Singleton
@@ -48,22 +45,20 @@ public class TaskListManager
 	@Inject
 	private Gson gson;
 
-	private static final String TASKS_FILE = "tasks.json";
+	private static final String TASKS_FILE_NAME = "tasks.json";
 
-	private static final String DEFAULT_TASKS_FILE = "default-tasks.json";
+	private static final String DEFAULT_TASKS_FILE_NAME = "default-tasks.json";
 
 	private static final File TASK_LIST_DIR = new File(RuneLite.RUNELITE_DIR, "task-list");
 
-	private static final Type type = new TypeToken<List<Task>>()
-	{
-	}.getType();
+	private static final Type TASK_LIST_TYPE = new TypeToken<List<Task>>() {}.getType();
 
 	@Getter
 	private TaskList taskList;
 
 	private boolean shouldLoadTasks;
 
-	public void loadTasks() throws IOException
+	public void loadTasks()
 	{
 		log.debug("Attempting to load tasks...");
 		gson = new GsonBuilder()
@@ -71,24 +66,19 @@ public class TaskListManager
 			.registerTypeAdapter(Task.class, new TaskSerializer())
 			.create();
 
-		taskList = loadTasksFromProfile();
-
-		for (Task task : taskList.getTasks())
-		{
-			log.debug("Task loaded: {}", task);
-		}
+		loadTasksFromProfile();
 	}
 
 
 	// Loads the default tasks list if the plugin hasn't created a savefile yet
 	public List<Task> loadDefaultTasks()
 	{
-		try (InputStream stream = TaskListPlugin.class.getResourceAsStream(DEFAULT_TASKS_FILE))
+		try (InputStream stream = TaskListPlugin.class.getResourceAsStream(DEFAULT_TASKS_FILE_NAME))
 		{
 			assert stream != null;
 			InputStreamReader definitionReader = new InputStreamReader(stream);
 
-			return gson.fromJson(definitionReader, type);
+			return gson.fromJson(definitionReader, TASK_LIST_TYPE);
 		}
 		catch (IOException e)
 		{
@@ -97,30 +87,62 @@ public class TaskListManager
 		}
 	}
 
-	public TaskList loadTasksFromProfile() throws IOException
+	public void loadTasksFromProfile()
 	{
-		File tasksFile = new File(getPluginFolder(), TASKS_FILE);
-		List<Task> list;
+		File tasksFile = new File(getPluginFolder(), TASKS_FILE_NAME);
 
 		try (FileInputStream stream = new FileInputStream(tasksFile))
 		{
 			InputStreamReader definitionReader = new InputStreamReader(stream);
-			list = gson.fromJson(definitionReader, type);
+			TaskList loadedTasks = new TaskList(gson.fromJson(definitionReader, TASK_LIST_TYPE));
+			completeSatisfiable(loadedTasks, false);
+			taskList = loadedTasks;
 
 			log.debug("Task list loaded from user profile...");
-			return new TaskList(list);
 		}
 		catch (FileNotFoundException e)
 		{
 			log.debug("Task list for user not found, loading default task list...");
-			list = loadDefaultTasks();
 
-			log.debug("Writing {}", tasksFile.getAbsolutePath());
+			TaskList loadedTasks = new TaskList(loadDefaultTasks());
+			completeSatisfiable(loadedTasks, false);
+			taskList = loadedTasks;
+
+			log.debug("Task list loaded from user profile...");
+		}
+		catch (IOException e)
+		{
+			throw new RuntimeException(e);
+		}
+	}
+
+
+	public void completeSatisfiable(TaskList taskList, boolean shouldNotify)
+	{
+		List<Task> allSatisfiable = taskList.getSatisfyingTasks(client).getTasksByCompletion(false).all();
+
+		if (!allSatisfiable.isEmpty()) {
+			log.debug("Satisfiable tasks found...");
+
+			for (Task task : allSatisfiable) {
+				log.debug("Completing task: {}", task.getDescription());
+				task.complete(shouldNotify);
+			}
+
+			// After all satisfiable tasks are done, save our tasks to our profile json
+			saveTaskListToJson(taskList);
+		} else {
+			log.debug("No tasks need to be pre-completed, as none are satisfiable.");
+		}
+	}
+	public void saveTaskListToJson(TaskList taskList) {
+		try  {
+			File tasksFile = new File(getPluginFolder(), TASKS_FILE_NAME);
+			String loadedTasksJson = gson.toJson(taskList.getTasks(), TASK_LIST_TYPE);
 			FileWriter file = new FileWriter(tasksFile);
-			file.write(gson.toJson(list));
-			file.close();
 
-			return new TaskList(list);
+			file.write(loadedTasksJson);
+			file.close();
 		}
 		catch (IOException e)
 		{
@@ -130,14 +152,11 @@ public class TaskListManager
 
 	public File getPluginFolder()
 	{
-		log.debug("Attempting to create plugin folders...");
 		File playerFolder;
 
 		if (client.getLocalPlayer() != null && client.getLocalPlayer().getName() != null)
 		{
-			String playerDir = client.getLocalPlayer().getName();
-
-			playerFolder = new File(TASK_LIST_DIR, playerDir);
+			playerFolder = new File(TASK_LIST_DIR, client.getLocalPlayer().getName());
 		}
 		else
 		{
@@ -148,31 +167,15 @@ public class TaskListManager
 		{
 			log.debug("Folder created at {}", playerFolder.getAbsolutePath());
 		}
-		else if (playerFolder.exists())
-		{
-			log.debug("Folders already created at {}", playerFolder.getAbsolutePath());
-		}
 
 		return playerFolder;
 	}
 
-//	public void getTasks()
-//	{
-//		if (taskList != null)
-//		{
-//			String jsonString = gson.toJson(taskList);
-//			log.debug(jsonString);
-//		}
-//	}
-
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
-		// Check when user logs in with plugin enabled if we should start loading tasks6
-		if (!shouldLoadTasks && gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			shouldLoadTasks = true;
-		}
+		// Check when user logs in with plugin enabled if we should start loading tasks
+		shouldLoadTasks = gameStateChanged.getGameState() == GameState.LOGGED_IN;
 	}
 
 
@@ -182,13 +185,13 @@ public class TaskListManager
 		if (shouldLoadTasks)
 		{
 			shouldLoadTasks = false;
+			// Only load tasks on FIRST gametick that is registered so we are sure stats have been fetched from the server
 			loadTasks();
 		}
-	}
 
-	public void clearTasks()
-	{
-		taskList = null;
+		completeSatisfiable(taskList, true);
+
+//		log.debug("Total points {}", taskList.get);
 	}
 
 	public void startUp()
