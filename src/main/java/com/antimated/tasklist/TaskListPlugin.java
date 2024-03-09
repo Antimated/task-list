@@ -1,5 +1,7 @@
 package com.antimated.tasklist;
 
+import com.antimated.tasklist.notifications.NotificationsManager;
+import com.antimated.tasklist.tasks.TaskListManager;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +33,16 @@ public class TaskListPlugin extends Plugin
 	private TaskListManager taskListManager;
 
 	@Inject
+	private NotificationsManager notifications;
+
+	@Inject
 	private ConfigManager configManager;
 
 	@Override
 	protected void startUp() throws Exception
 	{
 		log.info("Task list started!");
+		notifications.startUp();
 		taskListManager.startUp();
 	}
 
@@ -44,6 +50,7 @@ public class TaskListPlugin extends Plugin
 	protected void shutDown() throws Exception
 	{
 		log.info("Task list stopped!");
+		notifications.shutDown();
 		taskListManager.shutDown();
 	}
 
