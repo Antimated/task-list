@@ -1,6 +1,6 @@
 package com.antimated.tasklist;
 
-import com.antimated.tasklist.notifications.NotificationsManager;
+import com.antimated.tasklist.notifications.NotificationManager;
 import com.antimated.tasklist.tasks.TaskListManager;
 import com.google.inject.Provides;
 import javax.inject.Inject;
@@ -33,7 +33,7 @@ public class TaskListPlugin extends Plugin
 	private TaskListManager taskListManager;
 
 	@Inject
-	private NotificationsManager notifications;
+	private NotificationManager notifications;
 
 	@Inject
 	private ConfigManager configManager;

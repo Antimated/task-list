@@ -3,7 +3,7 @@ package com.antimated.tasklist.tasks;
 import com.antimated.tasklist.TaskListPlugin;
 import com.antimated.tasklist.json.TaskDeserializer;
 import com.antimated.tasklist.json.TaskSerializer;
-import com.antimated.tasklist.notifications.NotificationsManager;
+import com.antimated.tasklist.notifications.NotificationManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -56,7 +56,7 @@ public class TaskListManager
 	private ClientThread clientThread;
 
 	@Inject
-	private NotificationsManager notifications;
+	private NotificationManager notifications;
 
 	@Inject
 	private EventBus eventBus;

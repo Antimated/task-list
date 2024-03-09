@@ -3,7 +3,6 @@ package com.antimated.tasklist.notifications;
 import java.util.LinkedList;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.WidgetNode;
@@ -17,7 +16,7 @@ import net.runelite.client.eventbus.Subscribe;
 
 @Slf4j
 @Singleton
-public class NotificationsManager
+public class NotificationManager
 {
 	private static final int SCRIPT_ID = 3343; // NOTIFICATION_DISPLAY_INIT
 
@@ -25,7 +24,7 @@ public class NotificationsManager
 
 	private static final int INTERFACE_ID = 660;
 
-	private final LinkedList<NotificationItem> notifications = new LinkedList<>();
+	private final LinkedList<Notification> notifications = new LinkedList<>();
 	
 	private boolean isProcessingNotification = false;
 
@@ -62,7 +61,7 @@ public class NotificationsManager
 
 	public void addNotification(String title, String text, int color)
 	{
-		NotificationItem notification = new NotificationItem(title, text, color);
+		Notification notification = new Notification(title, text, color);
 		notifications.offer(notification);
 	}
 
@@ -75,7 +74,7 @@ public class NotificationsManager
 		if (!notifications.isEmpty() && !isProcessingNotification)
 		{
 			// Get and remove the first element in the notifications queue.
-			NotificationItem notification = notifications.poll();
+			Notification notification = notifications.poll();
 
 			// Display notification
 			displayNotification(notification);
@@ -85,9 +84,9 @@ public class NotificationsManager
 	/**
 	 * Display a notification and close it afterwards.
 	 *
-	 * @param notification NotificationItem
+	 * @param notification Notification
 	 */
-	private void displayNotification(NotificationItem notification) throws IllegalStateException, IllegalArgumentException
+	private void displayNotification(Notification notification) throws IllegalStateException, IllegalArgumentException
 	{
 		isProcessingNotification = true;
 
