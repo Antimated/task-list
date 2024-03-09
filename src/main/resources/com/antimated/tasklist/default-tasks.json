@@ -11,7 +11,7 @@
   },
   {
 	"id": 2,
-	"description": "Get 20.000.000 xp in any skill",
+	"description": "Get 20M xp in any skill",
 	"tier": "EASY",
 	"type": "ANY_SKILL_XP",
 	"requirement": {

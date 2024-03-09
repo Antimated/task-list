@@ -1,9 +1,9 @@
 package com.antimated.tasklist.tasks;
 
-import com.antimated.tasklist.TaskListManager;
 import com.antimated.tasklist.requirements.Requirement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,22 +18,6 @@ public class Task
 	private final TaskTier tier;
 	private final String description;
 	private final Requirement requirement;
+	@Setter
 	private boolean completed;
-
-	public void complete()
-	{
-		complete(true);
-	}
-
-	public void complete(boolean shouldNotify)
-	{
-		this.completed = true;
-
-		// Update task state in taskManager?
-		if (shouldNotify)
-		{
-			// Add message to task queue
-			log.debug("Completed a task: {}", this);
-		}
-	}
 }
