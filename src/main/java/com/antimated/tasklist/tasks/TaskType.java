@@ -4,6 +4,7 @@ import com.antimated.tasklist.requirements.AllSkillLevelsRequirement;
 import com.antimated.tasklist.requirements.AllSkillXpRequirement;
 import com.antimated.tasklist.requirements.AnySkillLevelRequirement;
 import com.antimated.tasklist.requirements.AnySkillXpRequirement;
+import com.antimated.tasklist.requirements.CombatLevelRequirement;
 import com.antimated.tasklist.requirements.Requirement;
 import com.antimated.tasklist.requirements.SkillLevelRequirement;
 import com.antimated.tasklist.requirements.SkillXpRequirement;
@@ -21,7 +22,8 @@ public enum TaskType
 	TOTAL_LEVEL("Total Level", TotalLevelRequirement.class),
 	TOTAL_XP("Total XP", TotalXpRequirement.class),
 	ALL_SKILL_LEVELS("All Skill Levels", AllSkillLevelsRequirement.class),
-	ALL_SKILL_XP("All Skill XP", AllSkillXpRequirement.class);
+	ALL_SKILL_XP("All Skill XP", AllSkillXpRequirement.class),
+	COMBAT_LEVEL("Combat level", CombatLevelRequirement.class);
 
 	private final String name;
 	private final Class<? extends Requirement> requirementClass;
