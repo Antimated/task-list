@@ -41,85 +41,18 @@ public class TaskListPlugin extends Plugin
 	@Inject
 	private ConfigManager configManager;
 
-	@Inject
-	private Client client;
-
-	@Subscribe
-	public void onGameTick(GameTick gameTick)
-	{
-		if (client.getLocalPlayer() != null)
-		{
-
-//			Set<Integer> armourSet = new HashSet<>();
-
-//			log.debug("Equiped steel full helm? {}", isItemInSlot(EquipmentInventorySlot.HEAD, ItemID.STEEL_FULL_HELM));
-//			log.debug("Equiped steel platebody? {}", isItemInSlot(EquipmentInventorySlot.BODY, ItemID.STEEL_PLATEBODY, ItemID.STEEL_PLATESKIRT));
-			//log.debug("Equiped steel platelegs/plateskirt? {}", isItemInSlot(EquipmentInventorySlot.LEGS, ItemID.STEEL_PLATELEGS, ItemID.STEEL_PLATESKIRT));
-//			for (EquipmentInventorySlot slot : equipmentSlots) {
-//				log.debug("Slot: {} with index: {}", slot, slot.getSlotIdx());
-//			}
-//			armourSet.add(ItemID.STEEL_FULL_HELM);
-//			armourSet.add(ItemID.STEEL_PLATEBODY);
-//			armourSet.add(ItemID.STEEL_PLATELEGS);
-//			armourSet.add(ItemID.STEEL_KITESHIELD);
-			//log.debug("Player name: {}", client.getLocalPlayer().getName());
-
-		}
-	}
-
-	private boolean isItemInSlot(EquipmentInventorySlot slot, int... itemIds)
-	{
-		ItemContainer container = client.getItemContainer(InventoryID.EQUIPMENT);
-
-		if (container != null)
-		{
-			Item item = container.getItem(slot.getSlotIdx());
-
-			if (item != null)
-			{
-				for (int itemId : itemIds)
-				{
-					if (item.getId() == itemId)
-					{
-						return true;
-					}
-				}
-			}
-		}
-
-		return false;
-	}
-
-	//	private boolean isItemInSlot(EquipmentInventorySlot slot, int... itemIds)
-//	{
-//		ItemContainer container = client.getItemContainer(InventoryID.EQUIPMENT);
-//
-//		if (container != null) {
-//			Item item = container.getItem(slot.getSlotIdx());
-//
-//			if (item != null) {
-//				for (int itemId : itemIds) {
-//					if (item.getId() == itemId) {
-//						return true;
-//					}
-//				}
-//			}
-//		}
-//
-//		return false;
-//	}
 	@Override
-	protected void startUp() throws Exception
+	protected void startUp()
 	{
-		log.info("Task list started!");
+		log.info("TaskListPlugin started!");
 		notifications.startUp();
 		taskListManager.startUp();
 	}
 
 	@Override
-	protected void shutDown() throws Exception
+	protected void shutDown()
 	{
-		log.info("Task list stopped!");
+		log.info("TaskListPlugin stopped!");
 		notifications.shutDown();
 		taskListManager.shutDown();
 	}

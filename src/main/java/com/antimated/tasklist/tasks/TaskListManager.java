@@ -68,6 +68,7 @@ public class TaskListManager
 
 	private void loadTasksFromProfile()
 	{
+		// TODO: Add some way we can patch new tasks in...
 		TaskList loadedTasks;
 		File tasksFile = new File(Util.getPluginFolder(client), TASKS_FILE_NAME);
 
