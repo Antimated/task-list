@@ -4,10 +4,11 @@ import java.io.File;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.ItemID;
 import net.runelite.client.RuneLite;
 
 @Slf4j
-public class Utils
+public class Util
 {
 
 	private static final File TASK_LIST_DIR = new File(RuneLite.RUNELITE_DIR, "task-list");
@@ -28,6 +29,24 @@ public class Utils
 		}
 
 		return false;
+	}
+
+	/**
+	 * Returns the integer of an ItemID field
+	 * e.g. STEEL_FULL_HELM returns 1157
+	 * @param fieldName String
+	 * @return int
+	 */
+	public static int getItemID(String fieldName)
+	{
+		try
+		{
+			return (int) ItemID.class.getField(fieldName).get(null);
+		}
+		catch (NoSuchFieldException | IllegalAccessException e)
+		{
+			throw new IllegalArgumentException("Invalid item name: " + fieldName, e);
+		}
 	}
 
 	public static File getPluginFolder(Client client)

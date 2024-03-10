@@ -69,5 +69,29 @@
 	  "quest": "CHILDREN_OF_THE_SUN"
 	},
 	"completed": false
+  },
+  {
+	"id": 7,
+	"description": "Equip a full set of steel",
+	"tier": "EASY",
+	"type": "EQUIPMENT",
+	"requirement": {
+	  "equipment": {
+		"HEAD": [
+		  "STEEL_FULL_HELM"
+		],
+		"BODY": [
+		  "STEEL_PLATEBODY"
+		],
+		"LEGS": [
+		  "STEEL_PLATELEGS",
+		  "STEEL_PLATESKIRT"
+		],
+		"SHIELD": [
+		  "STEEL_KITESHIELD"
+		]
+	  }
+	},
+	"completed": false
   }
 ]

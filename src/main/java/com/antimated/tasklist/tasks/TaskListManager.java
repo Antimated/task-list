@@ -4,7 +4,7 @@ import com.antimated.tasklist.TaskListPlugin;
 import com.antimated.tasklist.json.TaskDeserializer;
 import com.antimated.tasklist.json.TaskSerializer;
 import com.antimated.tasklist.notifications.NotificationManager;
-import com.antimated.tasklist.util.Utils;
+import com.antimated.tasklist.util.Util;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -69,7 +69,7 @@ public class TaskListManager
 	private void loadTasksFromProfile()
 	{
 		TaskList loadedTasks;
-		File tasksFile = new File(Utils.getPluginFolder(client), TASKS_FILE_NAME);
+		File tasksFile = new File(Util.getPluginFolder(client), TASKS_FILE_NAME);
 
 		try (FileInputStream stream = new FileInputStream(tasksFile))
 		{
@@ -149,7 +149,7 @@ public class TaskListManager
 	{
 		try
 		{
-			File tasksFile = new File(Utils.getPluginFolder(client), TASKS_FILE_NAME);
+			File tasksFile = new File(Util.getPluginFolder(client), TASKS_FILE_NAME);
 			String loadedTasksJson = gson.toJson(taskList.getTasks(), TASK_LIST_TYPE);
 			FileWriter file = new FileWriter(tasksFile);
 
@@ -174,7 +174,7 @@ public class TaskListManager
 	@Subscribe
 	public void onGameTick(GameTick gameTick)
 	{
-		if (RuneScapeProfileType.getCurrent(client) != RuneScapeProfileType.STANDARD || Utils.isPlayerWithinMapRegion(client, LAST_MAN_STANDING_REGIONS))
+		if (RuneScapeProfileType.getCurrent(client) != RuneScapeProfileType.STANDARD || Util.isPlayerWithinMapRegion(client, LAST_MAN_STANDING_REGIONS))
 		{
 			return;
 		}
