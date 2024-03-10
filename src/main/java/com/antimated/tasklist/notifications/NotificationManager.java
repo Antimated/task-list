@@ -1,6 +1,8 @@
 package com.antimated.tasklist.notifications;
 
 import java.util.LinkedList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +26,7 @@ public class NotificationManager
 
 	private static final int INTERFACE_ID = 660;
 
-	private final LinkedList<Notification> notifications = new LinkedList<>();
+	private final Queue<Notification> notifications = new ConcurrentLinkedQueue<>();
 	
 	private boolean isProcessingNotification = false;
 
@@ -56,12 +58,7 @@ public class NotificationManager
 
 	public void addNotification(String title, String text)
 	{
-		addNotification(title, text, -1);
-	}
-
-	public void addNotification(String title, String text, int color)
-	{
-		Notification notification = new Notification(title, text, color);
+		Notification notification = new Notification(title, text, -1);
 		notifications.offer(notification);
 	}
 
@@ -82,7 +79,7 @@ public class NotificationManager
 	}
 
 	/**
-	 * Display a notification and close it afterwards.
+	 * Display a notification and close it afterward.
 	 *
 	 * @param notification Notification
 	 */
@@ -98,9 +95,7 @@ public class NotificationManager
 
 		// Only remove notification when widget is fully closed.
 		clientThread.invokeLater(() -> {
-			assert notificationWidget != null;
-
-			if (notificationWidget.getWidth() > 0)
+			if (notificationWidget != null && notificationWidget.getWidth() > 0)
 			{
 				return false;
 			}
