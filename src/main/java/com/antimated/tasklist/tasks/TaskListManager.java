@@ -4,6 +4,8 @@ import com.antimated.tasklist.TaskListPlugin;
 import com.antimated.tasklist.json.TaskDeserializer;
 import com.antimated.tasklist.json.TaskSerializer;
 import com.antimated.tasklist.notifications.NotificationManager;
+import com.antimated.tasklist.util.Utils;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -16,6 +18,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.Getter;
@@ -24,7 +27,6 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
-import net.runelite.client.RuneLite;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.RuneScapeProfileType;
 import net.runelite.client.eventbus.EventBus;
@@ -38,11 +40,11 @@ public class TaskListManager
 
 	private static final String DEFAULT_TASKS_FILE_NAME = "default-tasks.json";
 
-	private static final File TASK_LIST_DIR = new File(RuneLite.RUNELITE_DIR, "task-list");
-
 	private static final Type TASK_LIST_TYPE = new TypeToken<List<Task>>()
 	{
 	}.getType();
+
+	private static final Set<Integer> LAST_MAN_STANDING_REGIONS = ImmutableSet.of(13658, 13659, 13660, 13914, 13915, 13916, 13918, 13919, 13920, 14174, 14175, 14176, 14430, 14431, 14432);
 
 	private boolean shouldLoadTasks;
 
@@ -64,37 +66,23 @@ public class TaskListManager
 	@Inject
 	private Gson gson;
 
-
-	public void loadTasks()
-	{
-		log.debug("Attempting to load tasks...");
-		gson = new GsonBuilder()
-			.registerTypeAdapter(Task.class, new TaskDeserializer())
-			.registerTypeAdapter(Task.class, new TaskSerializer())
-			.create();
-
-		loadTasksFromProfile();
-	}
-
-	public void loadTasksFromProfile()
+	private void loadTasksFromProfile()
 	{
 		TaskList loadedTasks;
-		File tasksFile = new File(getPluginFolder(), TASKS_FILE_NAME);
+		File tasksFile = new File(Utils.getPluginFolder(client), TASKS_FILE_NAME);
 
 		try (FileInputStream stream = new FileInputStream(tasksFile))
 		{
-			log.debug("Attempting to load task list for user...");
 			InputStreamReader definitionReader = new InputStreamReader(stream);
 			loadedTasks = new TaskList(gson.fromJson(definitionReader, TASK_LIST_TYPE));
-			log.debug("Task list for user loaded");
+			log.debug("Loading user task list");
 		}
 		catch (FileNotFoundException e)
 		{
-			log.debug("Task list for user not found, loading default task list...");
+			log.debug("User task list not found, trying default task list");
 
 			try (InputStream stream = TaskListPlugin.class.getResourceAsStream(DEFAULT_TASKS_FILE_NAME))
 			{
-				log.debug("Attempting to load default task list...");
 				assert stream != null;
 				InputStreamReader definitionReader = new InputStreamReader(stream);
 				loadedTasks = new TaskList(gson.fromJson(definitionReader, TASK_LIST_TYPE));
@@ -106,19 +94,19 @@ public class TaskListManager
 				throw new RuntimeException(ioe);
 			}
 		}
-		catch (IOException e)
+		catch (IOException ioe)
 		{
-			throw new RuntimeException(e);
+			throw new RuntimeException(ioe);
 		}
 
-		completeSatisfiable(loadedTasks, true);
+		completeSatisfiable(loadedTasks, false);
 		taskList = loadedTasks;
 
 		log.debug("Task list loaded successfully.");
 	}
 
 
-	public void completeSatisfiable(TaskList taskList, boolean shouldNotify)
+	private void completeSatisfiable(TaskList taskList, boolean shouldNotify)
 	{
 		List<Task> satisfiableTasks = taskList
 			.getSatisfyingTasks(client)
@@ -136,7 +124,19 @@ public class TaskListManager
 
 			if (shouldNotify)
 			{
-				notifications.addNotification("Task completed", task.getDescription());
+				StringBuilder text = new StringBuilder();
+
+				text.append("Task completed: ");
+				text.append("<col=ffffff>");
+				text.append(task.getDescription());
+				text.append("</col>");
+				text.append("<br>");
+				text.append("Points earned: ");
+				text.append("<col=ffffff>");
+				text.append(task.getTier().getPoints());
+				text.append("</col>");
+
+				notifications.addNotification("Task complete!", text.toString());
 			}
 		});
 
@@ -144,11 +144,12 @@ public class TaskListManager
 		saveTaskListToJson(taskList);
 	}
 
-	public void saveTaskListToJson(TaskList taskList)
+
+	private void saveTaskListToJson(TaskList taskList)
 	{
 		try
 		{
-			File tasksFile = new File(getPluginFolder(), TASKS_FILE_NAME);
+			File tasksFile = new File(Utils.getPluginFolder(client), TASKS_FILE_NAME);
 			String loadedTasksJson = gson.toJson(taskList.getTasks(), TASK_LIST_TYPE);
 			FileWriter file = new FileWriter(tasksFile);
 
@@ -161,26 +162,6 @@ public class TaskListManager
 		}
 	}
 
-	public File getPluginFolder()
-	{
-		File playerFolder;
-
-		if (client.getLocalPlayer() != null && client.getLocalPlayer().getName() != null)
-		{
-			playerFolder = new File(TASK_LIST_DIR, client.getLocalPlayer().getName());
-		}
-		else
-		{
-			playerFolder = TASK_LIST_DIR;
-		}
-
-		if (playerFolder.mkdirs())
-		{
-			log.debug("Folder created at {}", playerFolder.getAbsolutePath());
-		}
-
-		return playerFolder;
-	}
 
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
@@ -193,8 +174,7 @@ public class TaskListManager
 	@Subscribe
 	public void onGameTick(GameTick gameTick)
 	{
-		log.debug("Profile type: {}", RuneScapeProfileType.getCurrent(client));
-		if (RuneScapeProfileType.getCurrent(client) != RuneScapeProfileType.STANDARD)
+		if (RuneScapeProfileType.getCurrent(client) != RuneScapeProfileType.STANDARD || Utils.isPlayerWithinMapRegion(client, LAST_MAN_STANDING_REGIONS))
 		{
 			return;
 		}
@@ -202,8 +182,8 @@ public class TaskListManager
 		if (shouldLoadTasks)
 		{
 			shouldLoadTasks = false;
-			// Only load tasks on FIRST gametick that is registered so we are sure stats have been fetched from the server
-			loadTasks();
+			// Only load tasks on FIRST gametick that is registered, so we are sure stats have been fetched from the server
+			loadTasksFromProfile();
 		}
 
 		completeSatisfiable(taskList, true);
@@ -212,6 +192,10 @@ public class TaskListManager
 	public void startUp()
 	{
 		eventBus.register(this);
+		gson = new GsonBuilder()
+			.registerTypeAdapter(Task.class, new TaskDeserializer())
+			.registerTypeAdapter(Task.class, new TaskSerializer())
+			.create();
 		shouldLoadTasks = client.getGameState() == GameState.LOGGED_IN; // Check on plugin startup if we should load tasks at first gameTick.
 	}
 
