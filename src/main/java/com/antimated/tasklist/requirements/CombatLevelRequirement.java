@@ -13,6 +13,6 @@ public class CombatLevelRequirement implements Requirement
 	@Override
 	public boolean satisfiesRequirement(Client client)
 	{
-		return client.getLocalPlayer().getCombatLevel() >= level;
+		return client.getLocalPlayer() != null && client.getLocalPlayer().getCombatLevel() >= level;
 	}
 }
