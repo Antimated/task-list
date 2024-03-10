@@ -69,7 +69,10 @@ public class TaskListManager
 	private void loadTasksFromProfile()
 	{
 		// TODO: Add some way we can patch new tasks in...
-		gson = new GsonBuilder().registerTypeAdapter(Task.class, new TaskDeserializer()).registerTypeAdapter(Task.class, new TaskSerializer()).create();
+		gson = new GsonBuilder()
+			.registerTypeAdapter(Task.class, new TaskDeserializer())
+			.registerTypeAdapter(Task.class, new TaskSerializer())
+			.create();
 		TaskList loadedTasks;
 		File tasksFile = new File(Util.getPluginFolder(client), TASKS_FILE_NAME);
 
@@ -113,7 +116,10 @@ public class TaskListManager
 	private void completeSatisfiable(TaskList taskList, boolean shouldNotify)
 	{
 		// Get a list of satisfiable tasks that are not completed yet.
-		List<Task> satisfiableTasks = taskList.getSatisfyingTasks(client).getTasksByCompletion(false).all();
+		List<Task> satisfiableTasks = taskList
+			.getSatisfyingTasks(client)
+			.getTasksByCompletion(false)
+			.all();
 
 		// Don't continue when no tasks
 		if (satisfiableTasks.isEmpty())
@@ -140,15 +146,15 @@ public class TaskListManager
 	{
 		StringBuilder text = new StringBuilder();
 
-		text.append("Task completed: ");
-		text.append("<col=ffffff>");
-		text.append(task.getDescription());
-		text.append("</col>");
-		text.append("<br>");
-		text.append("Points earned: ");
-		text.append("<col=ffffff>");
-		text.append(task.getTier().getPoints());
-		text.append("</col>");
+		text.append("Task completed: ")
+			.append("<col=ffffff>")
+			.append(task.getDescription())
+			.append("</col>")
+			.append("<br>")
+			.append("Points earned: ")
+			.append("<col=ffffff>")
+			.append(task.getTier().getPoints())
+			.append("</col>");
 
 		return text.toString();
 	}
