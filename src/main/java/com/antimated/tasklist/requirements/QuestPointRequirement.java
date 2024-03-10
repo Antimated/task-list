@@ -1,12 +1,16 @@
 package com.antimated.tasklist.requirements;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.VarPlayer;
 
 @Slf4j
-@Data
+@Getter
+@RequiredArgsConstructor
+@ToString
 public class QuestPointRequirement implements Requirement
 {
 	private final int qp;
