@@ -6,6 +6,7 @@ import com.antimated.tasklist.requirements.AnySkillLevelRequirement;
 import com.antimated.tasklist.requirements.AnySkillXpRequirement;
 import com.antimated.tasklist.requirements.CombatLevelRequirement;
 import com.antimated.tasklist.requirements.QuestPointRequirement;
+import com.antimated.tasklist.requirements.QuestRequirement;
 import com.antimated.tasklist.requirements.Requirement;
 import com.antimated.tasklist.requirements.SkillLevelRequirement;
 import com.antimated.tasklist.requirements.SkillXpRequirement;
@@ -25,7 +26,8 @@ public enum TaskType
 	ALL_SKILL_LEVELS("All skill levels", AllSkillLevelsRequirement.class),
 	ALL_SKILL_XP("All skill XP", AllSkillXpRequirement.class),
 	COMBAT_LEVEL("Combat level", CombatLevelRequirement.class),
-	QUEST_POINTS("Quest points", QuestPointRequirement.class);
+	QUEST_POINTS("Quest points", QuestPointRequirement.class),
+	QUEST("Quest", QuestRequirement.class);
 
 	private final String name;
 	private final Class<? extends Requirement> requirementClass;
