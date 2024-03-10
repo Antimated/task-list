@@ -18,3 +18,9 @@
   - Total xp: e.g. Get 250M total xp
   - Hoping to add more
 - Notifies you when you complete a task
+
+
+## TODO's
+- Add custom panel to display tasks, total points, ...
+
+## Screenshots
