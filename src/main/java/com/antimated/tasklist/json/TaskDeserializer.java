@@ -41,6 +41,5 @@ public class TaskDeserializer implements JsonDeserializer<Task>
 			log.error("Error deserializing Task from JSON", e);
 			throw new JsonParseException("Error deserializing Task from JSON", e);
 		}
-
 	}
 }

@@ -10,7 +10,6 @@ import net.runelite.client.RuneLite;
 @Slf4j
 public class Util
 {
-
 	private static final File TASK_LIST_DIR = new File(RuneLite.RUNELITE_DIR, "task-list");
 
 	/**
@@ -34,6 +33,7 @@ public class Util
 	/**
 	 * Returns the integer of an ItemID field
 	 * e.g. STEEL_FULL_HELM returns 1157
+	 *
 	 * @param fieldName String
 	 * @return int
 	 */

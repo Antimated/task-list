@@ -4,26 +4,23 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 
 @Slf4j
 @Getter
+@RequiredArgsConstructor
 public class TaskList
 {
 	private final List<Task> tasks;
-
-	public TaskList(List<Task> tasks)
-	{
-		this.tasks = tasks;
-	}
 
 	public TaskList getTasksByType(TaskType... types)
 	{
 		List<TaskType> typeList = Arrays.asList(types);
 
 		List<Task> filteredTasks = tasks.stream()
-			.filter(task ->  typeList.contains(task.getType()))
+			.filter(task -> typeList.contains(task.getType()))
 			.collect(Collectors.toList());
 
 		return new TaskList(filteredTasks);
@@ -34,7 +31,7 @@ public class TaskList
 		List<TaskTier> tierList = Arrays.asList(tiers);
 
 		List<Task> filteredTasks = tasks.stream()
-			.filter(task ->  tierList.contains(task.getTier()))
+			.filter(task -> tierList.contains(task.getTier()))
 			.collect(Collectors.toList());
 
 		return new TaskList(filteredTasks);
@@ -48,7 +45,6 @@ public class TaskList
 
 		return new TaskList(filteredTasks);
 	}
-
 
 	public TaskList getTasksByCompletion(boolean isCompleted)
 	{

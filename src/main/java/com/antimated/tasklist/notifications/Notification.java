@@ -3,7 +3,6 @@ package com.antimated.tasklist.notifications;
 import lombok.Data;
 import lombok.NonNull;
 
-
 @Data
 @NonNull
 public class Notification

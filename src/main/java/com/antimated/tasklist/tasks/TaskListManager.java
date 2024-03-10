@@ -40,9 +40,7 @@ public class TaskListManager
 
 	private static final String DEFAULT_TASKS_FILE_NAME = "default-tasks.json";
 
-	private static final Type TASK_LIST_TYPE = new TypeToken<List<Task>>()
-	{
-	}.getType();
+	private static final Type TASK_LIST_TYPE = new TypeToken<List<Task>>() {}.getType();
 
 	private static final Set<Integer> LAST_MAN_STANDING_REGIONS = ImmutableSet.of(13658, 13659, 13660, 13914, 13915, 13916, 13918, 13919, 13920, 14174, 14175, 14176, 14430, 14431, 14432);
 
@@ -69,6 +67,10 @@ public class TaskListManager
 	private void loadTasksFromProfile()
 	{
 		// TODO: Add some way we can patch new tasks in...
+		gson = new GsonBuilder()
+			.registerTypeAdapter(Task.class, new TaskDeserializer())
+			.registerTypeAdapter(Task.class, new TaskSerializer())
+			.create();
 		TaskList loadedTasks;
 		File tasksFile = new File(Util.getPluginFolder(client), TASKS_FILE_NAME);
 
@@ -100,6 +102,8 @@ public class TaskListManager
 			throw new RuntimeException(ioe);
 		}
 
+		// We check our loadedTasks for already completed tasks,
+		// so we can prevent spamming the user with task completed notifications
 		completeSatisfiable(loadedTasks, false);
 		taskList = loadedTasks;
 
@@ -109,10 +113,13 @@ public class TaskListManager
 
 	private void completeSatisfiable(TaskList taskList, boolean shouldNotify)
 	{
+		// Get a list of satisfiable tasks that are not completed yet.
 		List<Task> satisfiableTasks = taskList
 			.getSatisfyingTasks(client)
-			.getTasksByCompletion(false).all();
+			.getTasksByCompletion(false)
+			.all();
 
+		// Don't continue when no tasks
 		if (satisfiableTasks.isEmpty())
 		{
 			return;
@@ -125,24 +132,29 @@ public class TaskListManager
 
 			if (shouldNotify)
 			{
-				StringBuilder text = new StringBuilder();
-
-				text.append("Task completed: ");
-				text.append("<col=ffffff>");
-				text.append(task.getDescription());
-				text.append("</col>");
-				text.append("<br>");
-				text.append("Points earned: ");
-				text.append("<col=ffffff>");
-				text.append(task.getTier().getPoints());
-				text.append("</col>");
-
-				notifications.addNotification("Task complete!", text.toString());
+				notifications.addNotification("Task complete!", getNotificationText(task));
 			}
 		});
 
 		// After all satisfiable tasks are done, save our tasks to our profile json
 		saveTaskListToJson(taskList);
+	}
+
+	private String getNotificationText(Task task)
+	{
+		StringBuilder text = new StringBuilder();
+
+		text.append("Task completed: ");
+		text.append("<col=ffffff>");
+		text.append(task.getDescription());
+		text.append("</col>");
+		text.append("<br>");
+		text.append("Points earned: ");
+		text.append("<col=ffffff>");
+		text.append(task.getTier().getPoints());
+		text.append("</col>");
+
+		return text.toString();
 	}
 
 
@@ -163,7 +175,6 @@ public class TaskListManager
 		}
 	}
 
-
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
@@ -171,32 +182,29 @@ public class TaskListManager
 		shouldLoadTasks = gameStateChanged.getGameState() == GameState.LOGGED_IN;
 	}
 
-
 	@Subscribe
 	public void onGameTick(GameTick gameTick)
 	{
+		// Don't do anything on non-standard worlds OR when a player is within LMS
 		if (RuneScapeProfileType.getCurrent(client) != RuneScapeProfileType.STANDARD || Util.isPlayerWithinMapRegion(client, LAST_MAN_STANDING_REGIONS))
 		{
 			return;
 		}
 
+		// On first registered game tick we want to load in our tasks
 		if (shouldLoadTasks)
 		{
 			shouldLoadTasks = false;
-			// Only load tasks on FIRST gametick that is registered, so we are sure stats have been fetched from the server
 			loadTasksFromProfile();
 		}
 
+		// After our tasks are loaded in we can start and check for tasks that are completed.
 		completeSatisfiable(taskList, true);
 	}
 
 	public void startUp()
 	{
 		eventBus.register(this);
-		gson = new GsonBuilder()
-			.registerTypeAdapter(Task.class, new TaskDeserializer())
-			.registerTypeAdapter(Task.class, new TaskSerializer())
-			.create();
 		shouldLoadTasks = client.getGameState() == GameState.LOGGED_IN; // Check on plugin startup if we should load tasks at first gameTick.
 	}
 

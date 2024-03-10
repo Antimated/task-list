@@ -1,6 +1,5 @@
 package com.antimated.tasklist.notifications;
 
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.inject.Inject;
@@ -27,7 +26,7 @@ public class NotificationManager
 	private static final int INTERFACE_ID = 660;
 
 	private final Queue<Notification> notifications = new ConcurrentLinkedQueue<>();
-	
+
 	private boolean isProcessingNotification = false;
 
 	@Inject

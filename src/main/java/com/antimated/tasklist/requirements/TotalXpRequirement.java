@@ -17,6 +17,7 @@ public class TotalXpRequirement implements Requirement
 
 	/**
 	 * Gets the Total XP from the client
+	 *
 	 * @param client Client
 	 * @return long
 	 */

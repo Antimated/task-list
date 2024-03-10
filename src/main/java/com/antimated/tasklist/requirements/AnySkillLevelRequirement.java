@@ -1,6 +1,5 @@
 package com.antimated.tasklist.requirements;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
