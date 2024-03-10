@@ -24,3 +24,4 @@
 - Add custom panel to display tasks, total points, ...
 
 ## Screenshots
+![image](https://github.com/Antimated/task-list/assets/2869409/b078e1df-92f1-4b32-b51e-037ba32b2599)
