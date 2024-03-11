@@ -11,7 +11,8 @@ import net.runelite.client.plugins.PluginDescriptor;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Task list"
+	name = "Task list",
+	conflicts = "Milestone Levels"
 )
 public class TaskListPlugin extends Plugin
 {
