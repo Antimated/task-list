@@ -16,7 +16,8 @@
   - Skill xp: e.g. Get 10M attack xp
   - Total level: e.g. Get 2000 total
   - Total xp: e.g. Get 250M total xp
-  - Hoping to add more
+  - Prayer: e.g. Activate the Piety prayer
+  - ...
 - Notifies you when you complete a task
 
 
