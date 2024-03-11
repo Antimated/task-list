@@ -6,6 +6,7 @@ import com.antimated.tasklist.requirements.AnySkillLevelRequirement;
 import com.antimated.tasklist.requirements.AnySkillXpRequirement;
 import com.antimated.tasklist.requirements.CombatLevelRequirement;
 import com.antimated.tasklist.requirements.EquipmentRequirement;
+import com.antimated.tasklist.requirements.PrayerRequirement;
 import com.antimated.tasklist.requirements.QuestPointRequirement;
 import com.antimated.tasklist.requirements.QuestRequirement;
 import com.antimated.tasklist.requirements.Requirement;
@@ -29,7 +30,8 @@ public enum TaskType
 	COMBAT_LEVEL("Combat level", CombatLevelRequirement.class),
 	QUEST_POINTS("Quest points", QuestPointRequirement.class),
 	QUEST("Quest", QuestRequirement.class),
-	EQUIPMENT("Equipment", EquipmentRequirement.class);
+	EQUIPMENT("Equipment", EquipmentRequirement.class),
+	PRAYER("Prayer", PrayerRequirement.class);
 
 	private final String name;
 	private final Class<? extends Requirement> requirementClass;

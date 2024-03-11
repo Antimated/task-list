@@ -93,5 +93,15 @@
 	  }
 	},
 	"completed": false
+  },
+  {
+	"id": 8,
+	"description": "Enable the Piety prayer",
+	"tier": "HARD",
+	"type": "PRAYER",
+	"requirement": {
+	  "prayer": "PIETY"
+	},
+	"completed": false
   }
 ]
