@@ -134,6 +134,7 @@ public class TaskListManager
 
 			if (shouldNotify)
 			{
+				log.debug("Should notify?");
 				notifications.addNotification("Task complete!", getNotificationText(task));
 			}
 		});
@@ -206,12 +207,14 @@ public class TaskListManager
 
 	public void startUp()
 	{
+		log.debug("TaskListManager startUp()");
 		eventBus.register(this);
 		shouldLoadTasks = client.getGameState() == GameState.LOGGED_IN; // Check on plugin startup if we should load tasks at first gameTick.
 	}
 
 	public void shutDown()
 	{
+		log.debug("TaskListManager shutDown()");
 		eventBus.unregister(this);
 		taskList = null;
 		shouldLoadTasks = false; // Disable loading of tasks at first gameTick

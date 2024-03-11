@@ -6,7 +6,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.GameState;
 import net.runelite.api.WidgetNode;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.widgets.Widget;
 import net.runelite.api.widgets.WidgetModalMode;
@@ -25,7 +27,7 @@ public class NotificationManager
 
 	private static final int INTERFACE_ID = 660;
 
-	private final Queue<Notification> notifications = new ConcurrentLinkedQueue<>();
+	private static final Queue<Notification> notifications = new ConcurrentLinkedQueue<>();
 
 	private boolean isProcessingNotification = false;
 
@@ -39,6 +41,16 @@ public class NotificationManager
 	private EventBus eventBus;
 
 	@Subscribe
+	public void onGameStateChanged(GameStateChanged gameStateChanged)
+	{
+		// Clear notifications when on login screen
+		if (gameStateChanged.getGameState() != GameState.LOGGED_IN)
+		{
+			clearNotifications();
+		}
+
+	}
+	@Subscribe
 	public void onGameTick(GameTick event)
 	{
 		processNotification();
@@ -46,12 +58,14 @@ public class NotificationManager
 
 	public void startUp()
 	{
+		log.debug("NotificationManager startUp()");
 		eventBus.register(this);
 	}
 
 	public void shutDown()
 	{
-		notifications.clear();
+		log.debug("NotificationManager shutDown()");
+		clearNotifications();
 		eventBus.unregister(this);
 	}
 
@@ -108,5 +122,14 @@ public class NotificationManager
 			// Invoke done
 			return true;
 		});
+	}
+
+
+	/**
+	 * Clears the current list of notifications and makes sure the processing notifications state is set to false
+	 */
+	private void clearNotifications() {
+		isProcessingNotification = false;
+		notifications.clear();
 	}
 }
