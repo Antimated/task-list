@@ -140,7 +140,7 @@ public class TaskListManager
 		});
 
 		// After all satisfiable tasks are done, save our tasks to our profile json
-		saveTaskListToJson(taskList);
+		saveTaskList(taskList);
 	}
 
 	private String getNotificationText(Task task)
@@ -161,7 +161,7 @@ public class TaskListManager
 	}
 
 
-	private void saveTaskListToJson(TaskList taskList)
+	private void saveTaskList(TaskList taskList)
 	{
 		try
 		{
