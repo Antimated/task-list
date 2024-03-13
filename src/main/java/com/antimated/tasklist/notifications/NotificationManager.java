@@ -81,14 +81,14 @@ public class NotificationManager
 	{
 		String title = "Task Complete!";
 		String description = task.getDescription();
-		Integer points = task.getTier().getPoints();
+		int points = task.getTier().getPoints();
 		StringBuilder text = new StringBuilder();
 
 		text.append("Task completed: ")
 			.append("<col=ffffff>")
 			.append(description).append("</col>")
 			.append("<br><br>")
-			.append("Points earned: ")
+			.append("Points Earned: ")
 			.append("<col=ffffff>")
 			.append(points)
 			.append("</col>");
