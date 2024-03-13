@@ -62,35 +62,30 @@ public class TaskListPlugin extends Plugin
 	}
 
 
-
-@Subscribe
-public void onCommandExecuted(CommandExecuted commandExecuted)
-{
-	log.debug("COMMAND EXECUTED");
-	if (developerMode)
+	@Subscribe
+	public void onCommandExecuted(CommandExecuted commandExecuted)
 	{
-		String[] args = commandExecuted.getArguments();
-		switch (commandExecuted.getCommand())
+		if (developerMode)
 		{
-			case "notify":
-				for (int i = 1; i <= 5000; i++)
-				{
-					notificationManager.addNotification("Test notification", "Notification added: " + i);
-				}
+			String[] args = commandExecuted.getArguments();
+			switch (commandExecuted.getCommand())
+			{
+				// Adds an absurd amount of notifications
+				case "notify":
+					for (int i = 1; i <= 5000; i++)
+					{
+						notificationManager.addNotification("Test notification", "Notification added: " + i);
+					}
 
-				break;
+					break;
 
-			// Reset tasks and set loginFlag to true so tasks get loaded in again
-			case "reset":
-				taskListManager.unSetRSProfileTasks();
-				taskListManager.loginFlag = true;
+				// Reset tasks and set loginFlag to true so tasks get loaded in again
+				case "reset":
+					taskListManager.unSetRSProfileTasks();
+					taskListManager.loginFlag = true;
 
-				clientThread.invoke(() -> {
-
-				});
-
-				break;
+					break;
+			}
 		}
 	}
-}
 }
