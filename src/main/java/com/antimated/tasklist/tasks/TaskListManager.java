@@ -1,34 +1,26 @@
 package com.antimated.tasklist.tasks;
 
+import com.antimated.tasklist.TaskListConfig;
 import com.antimated.tasklist.TaskListPlugin;
 import com.antimated.tasklist.json.TaskDeserializer;
 import com.antimated.tasklist.json.TaskSerializer;
 import com.antimated.tasklist.notifications.NotificationManager;
-import com.antimated.tasklist.util.Util;
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.callback.ClientThread;
-import net.runelite.client.config.RuneScapeProfileType;
+import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 
@@ -36,21 +28,6 @@ import net.runelite.client.eventbus.Subscribe;
 @Singleton
 public class TaskListManager
 {
-	private static final String TASKS_FILE_NAME = "tasks.json";
-
-	private static final String DEFAULT_TASKS_FILE_NAME = "default-tasks.json";
-
-	// @formatter:off
-	private static final Type TASK_LIST_TYPE = new TypeToken<List<Task>>() {}.getType();
-	// @formatter:on
-
-	private static final Set<Integer> LAST_MAN_STANDING_REGIONS = ImmutableSet.of(13658, 13659, 13660, 13914, 13915, 13916, 13918, 13919, 13920, 14174, 14175, 14176, 14430, 14431, 14432);
-
-	private boolean shouldLoadTasks;
-
-	@Getter
-	private TaskList taskList;
-
 	@Inject
 	private Client client;
 
@@ -58,7 +35,10 @@ public class TaskListManager
 	private ClientThread clientThread;
 
 	@Inject
-	private NotificationManager notifications;
+	private ConfigManager configManager;
+
+	@Inject
+	private NotificationManager notificationManager;
 
 	@Inject
 	private EventBus eventBus;
@@ -66,157 +46,155 @@ public class TaskListManager
 	@Inject
 	private Gson gson;
 
-	private void loadTasksFromProfile()
-	{
-		// TODO: Add some way we can patch new tasks in...
-		gson = new GsonBuilder()
-			.registerTypeAdapter(Task.class, new TaskDeserializer())
-			.registerTypeAdapter(Task.class, new TaskSerializer())
-			.create();
-		TaskList loadedTasks;
-		File tasksFile = new File(Util.getPluginFolder(client), TASKS_FILE_NAME);
+	public boolean loginFlag;
 
-		try (FileInputStream stream = new FileInputStream(tasksFile))
-		{
-			InputStreamReader definitionReader = new InputStreamReader(stream);
-			loadedTasks = new TaskList(gson.fromJson(definitionReader, TASK_LIST_TYPE));
-			log.debug("Loading user task list");
-		}
-		catch (FileNotFoundException e)
-		{
-			log.debug("User task list not found, trying default task list");
-
-			try (InputStream stream = TaskListPlugin.class.getResourceAsStream(DEFAULT_TASKS_FILE_NAME))
-			{
-				assert stream != null;
-				InputStreamReader definitionReader = new InputStreamReader(stream);
-				loadedTasks = new TaskList(gson.fromJson(definitionReader, TASK_LIST_TYPE));
-				log.debug("Default task list loaded");
-			}
-			catch (IOException ioe)
-			{
-				log.warn("Error loading default tasks", ioe);
-				throw new RuntimeException(ioe);
-			}
-		}
-		catch (IOException ioe)
-		{
-			throw new RuntimeException(ioe);
-		}
-
-		// We check our loadedTasks for already completed tasks,
-		// so we can prevent spamming the user with task completed notifications
-		completeSatisfiable(loadedTasks, false);
-		taskList = loadedTasks;
-
-		log.debug("Task list loaded successfully.");
-	}
-
-
-	private void completeSatisfiable(TaskList taskList, boolean shouldNotify)
-	{
-		// Get a list of satisfiable tasks that are not completed yet.
-		List<Task> satisfiableTasks = taskList
-			.getSatisfyingTasks(client)
-			.getTasksByCompletion(false)
-			.all();
-
-		// Don't continue when no tasks
-		if (satisfiableTasks.isEmpty())
-		{
-			return;
-		}
-
-		log.debug("Satisfiable tasks found, completing them...");
-
-		satisfiableTasks.forEach(task -> {
-			task.setCompleted(true);
-
-			if (shouldNotify)
-			{
-				log.debug("Should notify?");
-				notifications.addNotification("Task complete!", getNotificationText(task));
-			}
-		});
-
-		// After all satisfiable tasks are done, save our tasks to our profile json
-		saveTaskList(taskList);
-	}
-
-	private String getNotificationText(Task task)
-	{
-		StringBuilder text = new StringBuilder();
-
-		text.append("Task completed: ")
-			.append("<col=ffffff>")
-			.append(task.getDescription())
-			.append("</col>")
-			.append("<br>")
-			.append("Points earned: ")
-			.append("<col=ffffff>")
-			.append(task.getTier().getPoints())
-			.append("</col>");
-
-		return text.toString();
-	}
-
-
-	private void saveTaskList(TaskList taskList)
-	{
-		try
-		{
-			File tasksFile = new File(Util.getPluginFolder(client), TASKS_FILE_NAME);
-			String loadedTasksJson = gson.toJson(taskList.getTasks(), TASK_LIST_TYPE);
-			FileWriter file = new FileWriter(tasksFile);
-
-			file.write(loadedTasksJson);
-			file.close();
-		}
-		catch (IOException e)
-		{
-			throw new RuntimeException(e);
-		}
-	}
-
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-		// Check when user logs in with plugin enabled if we should start loading tasks
-		shouldLoadTasks = gameStateChanged.getGameState() == GameState.LOGGED_IN;
-	}
+	private TaskList taskList;
 
 	@Subscribe
 	public void onGameTick(GameTick gameTick)
 	{
-		// Don't do anything on non-standard worlds OR when a player is within LMS
-		if (RuneScapeProfileType.getCurrent(client) != RuneScapeProfileType.STANDARD || Util.isPlayerWithinMapRegion(client, LAST_MAN_STANDING_REGIONS))
+		if (loginFlag)
 		{
-			return;
+			log.debug("Login flag triggered");
+			clientThread.invoke(this::loadTaskList);
+			loginFlag = false;
 		}
 
-		// On first registered game tick we want to load in our tasks
-		if (shouldLoadTasks)
-		{
-			shouldLoadTasks = false;
-			loadTasksFromProfile();
-		}
+		completeSatisfiableTasks(true);
+	}
 
-		// After our tasks are loaded in we can start and check for tasks that are completed.
-		completeSatisfiable(taskList, true);
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event)
+	{
+		switch (event.getGameState())
+		{
+			case HOPPING:
+			case LOGGING_IN:
+			case CONNECTION_LOST:
+				loginFlag = true; // Makes sure we re-initialise our current tasks.
+				break;
+		}
 	}
 
 	public void startUp()
 	{
-		log.debug("TaskListManager startUp()");
 		eventBus.register(this);
-		shouldLoadTasks = client.getGameState() == GameState.LOGGED_IN; // Check on plugin startup if we should load tasks at first gameTick.
+		gson = new GsonBuilder().registerTypeAdapter(Task.class, new TaskDeserializer()).registerTypeAdapter(Task.class, new TaskSerializer()).create();
+
+		if (client.getGameState() == GameState.LOGGED_IN)
+		{
+			loginFlag = true;
+		}
 	}
 
 	public void shutDown()
 	{
-		log.debug("TaskListManager shutDown()");
+		loginFlag = false;
 		eventBus.unregister(this);
-		taskList = null;
-		shouldLoadTasks = false; // Disable loading of tasks at first gameTick
+	}
+
+	public void loadTaskList()
+	{
+		if (getRSProfileTasks().isEmpty())
+		{
+			log.debug("Loading default task list as no list for this profile is found.");
+			taskList = new TaskList(getDefaultTasks());
+			// Save tasks to RS profile if they have never been loaded.
+			setRSProfileTasks(taskList.getTasks());
+		}
+		else
+		{
+			log.debug("Loading tasks.");
+			taskList = new TaskList(getRSProfileTasks());
+		}
+
+		completeSatisfiableTasks(false);
+	}
+
+
+	/**
+	 * Unsets tasks from an RS profile
+	 */
+	public void unSetRSProfileTasks()
+	{
+		configManager.unsetRSProfileConfiguration(TaskListConfig.GROUP_NAME, TaskListConfig.TASKS_KEY);
+	}
+
+	/**
+	 * Sets tasks to an RS profile
+	 *
+	 * @param tasks List of Task objects
+	 */
+	public void setRSProfileTasks(List<Task> tasks)
+	{
+		String json = gson.toJson(tasks, TaskListConfig.TASK_LIST_TYPE);
+
+		configManager.setRSProfileConfiguration(TaskListConfig.GROUP_NAME, TaskListConfig.TASKS_KEY, json);
+	}
+
+	/**
+	 * Gets tasks from an RS profile.
+	 *
+	 * @return List<Task>
+	 */
+	public List<Task> getRSProfileTasks()
+	{
+		String tasks = configManager.getRSProfileConfiguration(TaskListConfig.GROUP_NAME, TaskListConfig.TASKS_KEY, String.class);
+
+		if (tasks == null)
+		{
+			return new ArrayList<>();
+		}
+
+		return gson.fromJson(tasks, TaskListConfig.TASK_LIST_TYPE);
+	}
+
+	/**
+	 * Gets the default tasks from plugin resources.
+	 *
+	 * @return List<Task>
+	 */
+	public List<Task> getDefaultTasks()
+	{
+		try (InputStream stream = TaskListPlugin.class.getResourceAsStream(TaskListConfig.DEFAULT_TASKS_FILE_NAME))
+		{
+			assert stream != null;
+			InputStreamReader definitionReader = new InputStreamReader(stream);
+			return gson.fromJson(definitionReader, TaskListConfig.TASK_LIST_TYPE);
+		}
+		catch (IOException ioe)
+		{
+			log.warn("Error loading default tasks: ", ioe);
+		}
+
+		return new ArrayList<>();
+	}
+
+	/**
+	 * Complete incomplete satisfiable tasks
+	 *
+	 * @param shouldNotify If completed tasks should throw a notification
+	 */
+	private void completeSatisfiableTasks(boolean shouldNotify)
+	{
+		List<Task> satisfiableTasks = taskList.getSatisfyingTasks(client).getTasksByCompletion(false).all();
+
+		if (!satisfiableTasks.isEmpty())
+		{
+			log.debug("Satisfiable tasks found.");
+
+			satisfiableTasks.forEach(task -> {
+				log.debug("Completing task: {}", task);
+
+				task.setCompleted(true);
+
+				if (shouldNotify)
+				{
+					notificationManager.addNotification(task);
+				}
+			});
+
+			setRSProfileTasks(taskList.getTasks());
+		}
 	}
 }

@@ -1,12 +1,24 @@
 package com.antimated.tasklist;
 
+import com.antimated.tasklist.tasks.Task;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.List;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;
 
-@ConfigGroup("task-list")
+@ConfigGroup(TaskListConfig.GROUP_NAME)
 public interface TaskListConfig extends Config
 {
+	String GROUP_NAME = "task-list";
+
+	String TASKS_KEY = "tasks";
+
+	Type TASK_LIST_TYPE = new TypeToken<List<Task>>() {}.getType();
+
+	String DEFAULT_TASKS_FILE_NAME = "default-tasks.json";
+
 	@ConfigItem(
 		keyName = "greeting",
 		name = "Welcome Greeting",

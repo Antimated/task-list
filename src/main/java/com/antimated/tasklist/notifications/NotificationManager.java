@@ -1,5 +1,6 @@
 package com.antimated.tasklist.notifications;
 
+import com.antimated.tasklist.tasks.Task;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.inject.Inject;
@@ -50,6 +51,7 @@ public class NotificationManager
 		}
 
 	}
+
 	@Subscribe
 	public void onGameTick(GameTick event)
 	{
@@ -73,6 +75,25 @@ public class NotificationManager
 	{
 		Notification notification = new Notification(title, text, -1);
 		notifications.offer(notification);
+	}
+
+	public void addNotification(Task task)
+	{
+		String title = "Task Complete!";
+		String description = task.getDescription();
+		Integer points = task.getTier().getPoints();
+		StringBuilder text = new StringBuilder();
+
+		text.append("Task completed: ")
+			.append("<col=ffffff>")
+			.append(description).append("</col>")
+			.append("<br><br>")
+			.append("Points earned: ")
+			.append("<col=ffffff>")
+			.append(points)
+			.append("</col>");
+
+		addNotification(title, text.toString());
 	}
 
 	/**
@@ -128,7 +149,8 @@ public class NotificationManager
 	/**
 	 * Clears the current list of notifications and makes sure the processing notifications state is set to false
 	 */
-	private void clearNotifications() {
+	private void clearNotifications()
+	{
 		isProcessingNotification = false;
 		notifications.clear();
 	}

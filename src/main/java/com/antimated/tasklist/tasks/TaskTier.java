@@ -12,7 +12,7 @@ public enum TaskTier
 	MASTER("Master", 400);
 
 	private final String name;
-	public final int points;
+	private final int points;
 
 	TaskTier(String name, int points)
 	{
