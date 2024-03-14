@@ -5,6 +5,8 @@ import com.antimated.tasklist.TaskListPlugin;
 import com.antimated.tasklist.json.TaskDeserializer;
 import com.antimated.tasklist.json.TaskSerializer;
 import com.antimated.tasklist.notifications.NotificationManager;
+import com.antimated.tasklist.util.Util;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +24,7 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.config.RuneScapeProfileType;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 
@@ -28,6 +32,7 @@ import net.runelite.client.eventbus.Subscribe;
 @Singleton
 public class TaskListManager
 {
+	private static final Set<Integer> LAST_MAN_STANDING_REGIONS = ImmutableSet.of(13658, 13659, 13660, 13914, 13915, 13916, 13918, 13919, 13920, 14174, 14175, 14176, 14430, 14431, 14432);
 	@Inject
 	private Client client;
 
@@ -53,11 +58,21 @@ public class TaskListManager
 	@Subscribe
 	public void onGameTick(GameTick gameTick)
 	{
+		// Stop completing satisfiable tasks when in LMS regions
+		if (Util.isPlayerWithinMapRegion(client, LAST_MAN_STANDING_REGIONS)) {
+			return;
+		}
+
 		if (loginFlag)
 		{
-			log.debug("Login flag triggered");
-			clientThread.invoke(this::loadTaskList);
+			if (RuneScapeProfileType.getCurrent(client) != RuneScapeProfileType.STANDARD) {
+				log.debug("Not loading tasks as we are not on a regular game world.");
+				return;
+			}
+
+			log.debug("Logged in, attempting to fetch list of tasks.");
 			loginFlag = false;
+			clientThread.invoke(this::loadTaskList);
 		}
 
 		completeSatisfiableTasks(true);
@@ -95,16 +110,17 @@ public class TaskListManager
 
 	public void loadTaskList()
 	{
+		// TODO: If new plugin version is available we should check if a set of new tasks is available
 		if (getRSProfileTasks().isEmpty())
 		{
-			log.debug("Loading default task list as no list for this profile is found.");
+			log.debug("Loading default tasks - no RS-profile tasks found.");
 			taskList = new TaskList(getDefaultTasks());
 			// Save tasks to RS profile if they have never been loaded.
 			setRSProfileTasks(taskList.getTasks());
 		}
 		else
 		{
-			log.debug("Loading tasks.");
+			log.debug("Loading RS-profile tasks.");
 			taskList = new TaskList(getRSProfileTasks());
 		}
 
@@ -164,7 +180,7 @@ public class TaskListManager
 		}
 		catch (IOException ioe)
 		{
-			log.warn("Error loading default tasks: ", ioe);
+			log.error("Error loading default tasks: ", ioe);
 		}
 
 		return new ArrayList<>();
@@ -181,17 +197,17 @@ public class TaskListManager
 
 		if (!satisfiableTasks.isEmpty())
 		{
-			log.debug("Satisfiable tasks found.");
+			log.debug("Found tasks to complete:");
 
 			satisfiableTasks.forEach(task -> {
-				log.debug("Completing task: {}", task);
-
 				task.setCompleted(true);
 
 				if (shouldNotify)
 				{
 					notificationManager.addNotification(task);
 				}
+
+				log.debug(("Completing task: {} {}").trim(), task.getDescription(), shouldNotify ? "(and notify)." : "");
 			});
 
 			setRSProfileTasks(taskList.getTasks());
