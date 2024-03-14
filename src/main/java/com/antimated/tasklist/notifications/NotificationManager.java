@@ -30,8 +30,6 @@ public class NotificationManager
 
 	private static final Queue<Notification> notifications = new ConcurrentLinkedQueue<>();
 
-	private boolean isProcessingNotification = false;
-
 	@Inject
 	private Client client;
 
@@ -42,6 +40,12 @@ public class NotificationManager
 	private EventBus eventBus;
 
 	@Subscribe
+	public void onGameTick(GameTick event)
+	{
+		processNotification();
+	}
+
+	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
 		// Clear notifications when on login screen
@@ -50,12 +54,6 @@ public class NotificationManager
 			clearNotifications();
 		}
 
-	}
-
-	@Subscribe
-	public void onGameTick(GameTick event)
-	{
-		processNotification();
 	}
 
 	public void startUp()
@@ -86,7 +84,8 @@ public class NotificationManager
 
 		text.append("Task completed: ")
 			.append("<col=ffffff>")
-			.append(description).append("</col>")
+			.append(description)
+			.append("</col>")
 			.append("<br><br>")
 			.append("Points Earned: ")
 			.append("<col=ffffff>")
@@ -101,8 +100,13 @@ public class NotificationManager
 	 */
 	private void processNotification()
 	{
+		// Don't process when any type of notification is visible (collection log, league task, one of our own, ...)
+		if (client.getWidget(INTERFACE_ID, 1) != null)
+		{
+			return;
+		}
 		// Only process notifications if the queue is not empty AND the queue is not processing any notifications.
-		if (!notifications.isEmpty() && !isProcessingNotification)
+		if (!notifications.isEmpty())
 		{
 			// Get and remove the first element in the notifications queue.
 			Notification notification = notifications.poll();
@@ -119,8 +123,6 @@ public class NotificationManager
 	 */
 	private void displayNotification(Notification notification) throws IllegalStateException, IllegalArgumentException
 	{
-		isProcessingNotification = true;
-
 		WidgetNode notificationNode = client.openInterface(COMPONENT_ID, INTERFACE_ID, WidgetModalMode.MODAL_CLICKTHROUGH);
 		Widget notificationWidget = client.getWidget(INTERFACE_ID, 1);
 
@@ -129,16 +131,15 @@ public class NotificationManager
 
 		// Only remove notification when widget is fully closed.
 		clientThread.invokeLater(() -> {
-			if (notificationWidget != null && notificationWidget.getWidth() > 0)
+			assert notificationWidget != null;
+
+			if (notificationWidget.getWidth() > 0)
 			{
 				return false;
 			}
 
 			// Close the interface
 			client.closeInterface(notificationNode, true);
-
-			// We can now start processing notifications again.
-			isProcessingNotification = false;
 
 			// Invoke done
 			return true;
@@ -151,7 +152,6 @@ public class NotificationManager
 	 */
 	private void clearNotifications()
 	{
-		isProcessingNotification = false;
 		notifications.clear();
 	}
 }
