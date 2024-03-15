@@ -48,25 +48,4 @@ public class Util
 			throw new IllegalArgumentException("Invalid item name: " + fieldName, e);
 		}
 	}
-
-	public static File getPluginFolder(Client client)
-	{
-		File playerFolder;
-
-		if (client.getLocalPlayer() != null && client.getLocalPlayer().getName() != null)
-		{
-			playerFolder = new File(TASK_LIST_DIR, client.getLocalPlayer().getName());
-		}
-		else
-		{
-			playerFolder = TASK_LIST_DIR;
-		}
-
-		if (playerFolder.mkdirs())
-		{
-			log.debug("Folder created at {}", playerFolder.getAbsolutePath());
-		}
-
-		return playerFolder;
-	}
 }
