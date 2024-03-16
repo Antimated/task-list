@@ -90,6 +90,15 @@
 	"completed": false
   },
   {
+	"description": "Get 200M xp in any skill",
+	"tier": "MASTER",
+	"requirement": {
+	  "type": "AnySkillXpRequirement",
+	  "xp": 200000000
+	},
+	"completed": false
+  },
+  {
 	"description": "Use the Piety prayer",
 	"tier": "ELITE",
 	"requirement": {
