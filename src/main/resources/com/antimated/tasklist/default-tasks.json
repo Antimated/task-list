@@ -1,106 +1,153 @@
 [
   {
-	"id": 1,
+	"description": "Get level 10 in any skill",
+	"tier": "EASY",
+	"requirement": {
+	  "type": "AnySkillLevelRequirement",
+	  "level": 10
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 20 in any skill",
+	"tier": "EASY",
+	"requirement": {
+	  "type": "AnySkillLevelRequirement",
+	  "level": 20
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 30 in any skill",
+	"tier": "EASY",
+	"requirement": {
+	  "type": "AnySkillLevelRequirement",
+	  "level": 30
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 40 in any skill",
+	"tier": "EASY",
+	"requirement": {
+	  "type": "AnySkillLevelRequirement",
+	  "level": 40
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 50 in any skill",
+	"tier": "MEDIUM",
+	"requirement": {
+	  "type": "AnySkillLevelRequirement",
+	  "level": 50
+	},
+	"completed": false
+  },
+  {
 	"description": "Get level 60 in any skill",
-	"tier": "EASY",
-	"type": "ANY_SKILL_LEVEL",
+	"tier": "MEDIUM",
 	"requirement": {
+	  "type": "AnySkillLevelRequirement",
 	  "level": 60
 	},
 	"completed": false
   },
   {
-	"id": 2,
-	"description": "Get 20M xp in any skill",
-	"tier": "EASY",
-	"type": "ANY_SKILL_XP",
+	"description": "Get level 70 in any skill",
+	"tier": "MEDIUM",
 	"requirement": {
-	  "xp": 20000000
+	  "type": "AnySkillLevelRequirement",
+	  "level": 70
 	},
 	"completed": false
   },
   {
-	"id": 3,
-	"description": "Get level 50 in Attack",
-	"tier": "EASY",
-	"type": "SKILL_LEVEL",
-	"requirement": {
-	  "skill": "ATTACK",
-	  "level": 60
-	},
-	"completed": false
-  },
-  {
-	"id": 4,
-	"description": "Get level 1200 total",
-	"tier": "EASY",
-	"type": "TOTAL_LEVEL",
-	"requirement": {
-	  "level": 1200
-	},
-	"completed": false
-  },
-  {
-	"id": 5,
-	"description": "Get 300M total xp",
-	"tier": "ELITE",
-	"type": "TOTAL_XP",
-	"requirement": {
-	  "xp": 300000000
-	},
-	"completed": false
-  },
-  {
-	"id": 6,
-	"description": "Complete the Fremenik Trials",
-	"tier": "ELITE",
-	"type": "QUEST",
-	"requirement": {
-	  "quest": "THE_FREMENNIK_TRIALS"
-	},
-	"completed": false
-  },
-  {
-	"id": 7,
-	"description": "Complete the Children of the Sun",
-	"tier": "ELITE",
-	"type": "QUEST",
-	"requirement": {
-	  "quest": "CHILDREN_OF_THE_SUN"
-	},
-	"completed": false
-  },
-  {
-	"id": 7,
-	"description": "Equip a full set of steel",
-	"tier": "EASY",
-	"type": "EQUIPMENT",
-	"requirement": {
-	  "equipment": {
-		"HEAD": [
-		  "STEEL_FULL_HELM"
-		],
-		"BODY": [
-		  "STEEL_PLATEBODY"
-		],
-		"LEGS": [
-		  "STEEL_PLATELEGS",
-		  "STEEL_PLATESKIRT"
-		],
-		"SHIELD": [
-		  "STEEL_KITESHIELD"
-		]
-	  }
-	},
-	"completed": false
-  },
-  {
-	"id": 8,
-	"description": "Enable the Piety prayer",
+	"description": "Get level 80 in any skill",
 	"tier": "HARD",
-	"type": "PRAYER",
 	"requirement": {
+	  "type": "AnySkillLevelRequirement",
+	  "level": 80
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 90 in any skill",
+	"tier": "ELITE",
+	"requirement": {
+	  "type": "AnySkillLevelRequirement",
+	  "level": 90
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 99 in any skill",
+	"tier": "ELITE",
+	"requirement": {
+	  "type": "AnySkillLevelRequirement",
+	  "level": 99
+	},
+	"completed": false
+  },
+  {
+	"description": "Use the Piety prayer",
+	"tier": "ELITE",
+	"requirement": {
+	  "type": "PrayerRequirement",
 	  "prayer": "PIETY"
+	},
+	"completed": false
+  },
+  {
+	"description": "Use Chivalry or Piety prayer",
+	"tier": "ELITE",
+	"requirement": {
+	  "type": "OrRequirement",
+	  "requirements": [
+		{
+		  "type": "PrayerRequirement",
+		  "prayer": "PIETY"
+		},
+		{
+		  "type": "PrayerRequirement",
+		  "prayer": "CHIVALRY"
+		}
+	  ]
+	},
+	"completed": false
+  },
+  {
+	"description": "Equip a full steel armour set",
+	"tier": "EASY",
+	"requirement": {
+	  "type": "EquipmentRequirement",
+	  "equipment": [
+		{
+		  "slot": "HEAD",
+		  "allowedItems": [
+			1157
+		  ]
+		},
+		{
+		  "slot": "BODY",
+		  "allowedItems": [
+			1119
+		  ]
+		},
+		{
+		  "slot": "LEGS",
+		  "allowedItems": [
+			1069,
+			1083
+		  ]
+		},
+		{
+		  "slot": "SHIELD",
+		  "allowedItems": [
+			1193
+		  ]
+		}
+	  ]
 	},
 	"completed": false
   }

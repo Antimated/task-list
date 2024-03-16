@@ -24,6 +24,4 @@ public class Task
 		this.requirement = requirement;
 		this.completed = completed;
 	}
-
-
 }

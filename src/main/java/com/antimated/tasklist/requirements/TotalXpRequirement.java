@@ -21,9 +21,9 @@ public class TotalXpRequirement implements Requirement
 	 * @param client Client
 	 * @return long
 	 */
-	private static long getTotalXp(Client client)
+	private static int getTotalXp(Client client)
 	{
-		long total = 0;
+		int total = 0;
 
 		for (Skill skill : Skill.values())
 		{

@@ -15,6 +15,7 @@ import com.antimated.tasklist.requirements.SkillLevelRequirement;
 import com.antimated.tasklist.requirements.SkillXpRequirement;
 import com.antimated.tasklist.requirements.TotalLevelRequirement;
 import com.antimated.tasklist.requirements.TotalXpRequirement;
+import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -23,6 +24,8 @@ import net.runelite.client.util.RuntimeTypeAdapterFactory;
 @Slf4j
 public class Util
 {
+	public static final Set<Integer> LAST_MAN_STANDING_REGIONS = ImmutableSet.of(13658, 13659, 13660, 13914, 13915, 13916, 13918, 13919, 13920, 14174, 14175, 14176, 14430, 14431, 14432);
+
 	/**
 	 * Is player currently within the provided map regions
 	 */
@@ -45,20 +48,20 @@ public class Util
 	{
 		return RuntimeTypeAdapterFactory
 			.of(Requirement.class, "type")
-			.registerSubtype(AllSkillLevelsRequirement.class, "AllSkillLevelsRequirement")
-			.registerSubtype(AllSkillXpRequirement.class, "AllSkillXpRequirement")
-			.registerSubtype(AnySkillLevelRequirement.class, "AnySkillLevelRequirement")
-			.registerSubtype(AnySkillXpRequirement.class, "AnySkillXpRequirement")
-			.registerSubtype(CombatLevelRequirement.class, "CombatLevelRequirement")
-			.registerSubtype(EquipmentRequirement.class, "EquipmentRequirement")
-			.registerSubtype(OrRequirement.class, "OrRequirement")
-			.registerSubtype(PrayerRequirement.class, "PrayerRequirement")
-			.registerSubtype(QuestPointRequirement.class, "QuestPointRequirement")
-			.registerSubtype(QuestRequirement.class, "QuestRequirement")
-			.registerSubtype(SkillLevelRequirement.class, "SkillLevelRequirement")
-			.registerSubtype(SkillXpRequirement.class, "SkillXpRequirement")
-			.registerSubtype(TotalLevelRequirement.class, "TotalLevelRequirement")
-			.registerSubtype(TotalXpRequirement.class, "TotalXpRequirement");
+			.registerSubtype(AllSkillLevelsRequirement.class)
+			.registerSubtype(AllSkillXpRequirement.class)
+			.registerSubtype(AnySkillLevelRequirement.class)
+			.registerSubtype(AnySkillXpRequirement.class)
+			.registerSubtype(CombatLevelRequirement.class)
+			.registerSubtype(EquipmentRequirement.class)
+			.registerSubtype(OrRequirement.class)
+			.registerSubtype(PrayerRequirement.class)
+			.registerSubtype(QuestPointRequirement.class)
+			.registerSubtype(QuestRequirement.class)
+			.registerSubtype(SkillLevelRequirement.class)
+			.registerSubtype(SkillXpRequirement.class)
+			.registerSubtype(TotalLevelRequirement.class)
+			.registerSubtype(TotalXpRequirement.class);
 
 	}
 }

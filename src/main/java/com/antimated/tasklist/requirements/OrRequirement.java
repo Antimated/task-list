@@ -6,9 +6,9 @@ import java.util.List;
 import lombok.Getter;
 import net.runelite.api.Client;
 
+@Getter
 public class OrRequirement implements Requirement
 {
-	@Getter
 	private final List<Requirement> requirements;
 
 	public OrRequirement(Requirement... reqs)
