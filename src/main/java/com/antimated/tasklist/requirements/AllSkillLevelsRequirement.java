@@ -20,6 +20,7 @@ public class AllSkillLevelsRequirement implements Requirement
 	{
 		for (Skill skill : Skill.values())
 		{
+			log.debug("AllSkillLevelsRequirement with client.getRealSkillLevel(skill) {} < level {}", client.getRealSkillLevel(skill), level);
 			if (client.getRealSkillLevel(skill) < level)
 			{
 				return false;

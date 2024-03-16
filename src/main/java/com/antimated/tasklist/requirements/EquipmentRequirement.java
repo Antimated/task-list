@@ -1,11 +1,9 @@
 package com.antimated.tasklist.requirements;
 
-import com.antimated.tasklist.util.Util;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.antimated.tasklist.equipment.Equipment;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
@@ -16,29 +14,41 @@ import net.runelite.api.ItemContainer;
 
 @Slf4j
 @Getter
-@RequiredArgsConstructor
 @ToString
 public class EquipmentRequirement implements Requirement
 {
-	/**
-	 * JSON format
-	 * "equipment": {
-	 * 		"HEAD": [
-	 * 		  "STEEL_FULL_HELM"
-	 * 		],
-	 * 		"BODY": [
-	 * 		  "STEEL_PLATEBODY"
-	 * 		],
-	 * 		"LEGS": [
-	 * 		  "STEEL_PLATELEGS",
-	 * 		  "STEEL_PLATESKIRT"
-	 * 		],
-	 * 		"SHIELD": [
-	 * 		  "STEEL_KITESHIELD"
-	 * 		]
-	 * }
-	 */
-	private final Map<EquipmentInventorySlot, Set<String>> equipment;
+	private final List<Equipment> equipment;
+
+	public EquipmentRequirement(Equipment... equipment)
+	{
+		List<Equipment> uniques = new ArrayList<>();
+
+		// Equipment may only be added if the passed slot is not added yet
+		for (Equipment unique : equipment)
+		{
+			if (!containsEquipmentSlot(uniques, unique.getSlot()))
+			{
+				uniques.add(unique);
+				continue;
+			}
+
+			log.warn("Duplicate slot {} added, skipping.", unique.getSlot());
+		}
+
+		this.equipment = List.copyOf(uniques);
+	}
+
+	private boolean containsEquipmentSlot(List<Equipment> slots, EquipmentInventorySlot slot)
+	{
+		for (Equipment equipment : slots)
+		{
+			if (equipment.getSlot() == slot)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	public boolean satisfiesRequirement(Client client)
@@ -50,28 +60,21 @@ public class EquipmentRequirement implements Requirement
 			return false;
 		}
 
-		for (Map.Entry<EquipmentInventorySlot, Set<String>> entry : equipment.entrySet())
+		for (Equipment e : equipment)
 		{
-			// Get equipment slots
-			EquipmentInventorySlot equipmentSlot = entry.getKey();
+			EquipmentInventorySlot slot = e.getSlot();
+			List<Integer> items = e.getAllowedItems();
+			Item item = equipmentContainer.getItem(slot.getSlotIdx());
 
-			// Convert item names to item IDs
-			Set<Integer> allowedItemIds = entry.getValue()
-				.stream()
-				.mapToInt(Util::getItemID)
-				.boxed()
-				.collect(Collectors.toSet());
-
-			// Get the item in the specified equipment slot
-			Item item = equipmentContainer.getItem(equipmentSlot.getSlotIdx());
-
-			// Slot is not equipped
-			if (item == null) {
+			// Item not equipped
+			if (item == null)
+			{
 				return false;
 			}
 
-			// Equipped item is not in list of allowed items
-			if (!allowedItemIds.contains(item.getId())) {
+			// Item equipped but not int he list of to equip items
+			if (!items.contains(item.getId()))
+			{
 				return false;
 			}
 		}
