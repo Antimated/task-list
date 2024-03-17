@@ -2,6 +2,7 @@ package com.antimated.tasklist.util;
 
 import com.antimated.tasklist.requirements.AllSkillLevelsRequirement;
 import com.antimated.tasklist.requirements.AllSkillXpRequirement;
+import com.antimated.tasklist.requirements.AndRequirement;
 import com.antimated.tasklist.requirements.AnySkillLevelRequirement;
 import com.antimated.tasklist.requirements.AnySkillXpRequirement;
 import com.antimated.tasklist.requirements.CombatLevelRequirement;
@@ -50,6 +51,7 @@ public class Util
 			.of(Requirement.class, "type")
 			.registerSubtype(AllSkillLevelsRequirement.class)
 			.registerSubtype(AllSkillXpRequirement.class)
+			.registerSubtype(AndRequirement.class)
 			.registerSubtype(AnySkillLevelRequirement.class)
 			.registerSubtype(AnySkillXpRequirement.class)
 			.registerSubtype(CombatLevelRequirement.class)

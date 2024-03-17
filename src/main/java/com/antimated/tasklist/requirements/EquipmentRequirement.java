@@ -72,7 +72,7 @@ public class EquipmentRequirement implements Requirement
 				return false;
 			}
 
-			// Item equipped but not int he list of to equip items
+			// Item equipped but not in the list of items to equip.
 			if (!items.contains(item.getId()))
 			{
 				return false;

@@ -159,5 +159,58 @@
 	  ]
 	},
 	"completed": false
+  },
+  {
+	"description": "Pray the Chivalry or Piety prayer whilst wearing full steel",
+	"tier": "ELITE",
+	"requirement": {
+	  "type": "AndRequirement",
+	  "requirements": [
+		{
+		  "type": "EquipmentRequirement",
+		  "equipment": [
+			{
+			  "slot": "HEAD",
+			  "allowedItems": [
+				1157
+			  ]
+			},
+			{
+			  "slot": "BODY",
+			  "allowedItems": [
+				1119
+			  ]
+			},
+			{
+			  "slot": "LEGS",
+			  "allowedItems": [
+				1069,
+				1083
+			  ]
+			},
+			{
+			  "slot": "SHIELD",
+			  "allowedItems": [
+				1193
+			  ]
+			}
+		  ]
+		},
+		{
+		  "type": "OrRequirement",
+		  "requirements": [
+			{
+			  "type": "PrayerRequirement",
+			  "prayer": "PIETY"
+			},
+			{
+			  "type": "PrayerRequirement",
+			  "prayer": "CHIVALRY"
+			}
+		  ]
+		}
+	  ]
+	},
+	"completed": false
   }
 ]
