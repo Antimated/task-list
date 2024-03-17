@@ -3,6 +3,7 @@ package com.antimated.tasklist.requirements;
 import com.antimated.tasklist.equipment.Equipment;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,7 @@ import net.runelite.api.EquipmentInventorySlot;
 import net.runelite.api.InventoryID;
 import net.runelite.api.Item;
 import net.runelite.api.ItemContainer;
+import net.runelite.client.game.ItemVariationMapping;
 
 @Slf4j
 @Getter
@@ -63,7 +65,13 @@ public class EquipmentRequirement implements Requirement
 		for (Equipment e : equipment)
 		{
 			EquipmentInventorySlot slot = e.getSlot();
-			List<Integer> items = e.getAllowedItems();
+			// Get all variations for the passed itemId's
+			List<Integer> items = e.getAllowedItems()
+				.stream()
+				.flatMap(itemId -> ItemVariationMapping.getVariations(itemId).stream())
+				.distinct()
+				.collect(Collectors.toList());
+
 			Item item = equipmentContainer.getItem(slot.getSlotIdx());
 
 			// Item not equipped
