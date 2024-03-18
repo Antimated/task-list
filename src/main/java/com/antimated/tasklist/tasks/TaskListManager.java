@@ -92,6 +92,7 @@ public class TaskListManager
 			completeSatisfiableTasks(false);
 		}
 
+		// Every game tick, check for completable tasks
 		completeSatisfiableTasks(true);
 	}
 
@@ -121,7 +122,6 @@ public class TaskListManager
 				log.debug(("Completing task: {} {}").trim(), task.getDescription(), shouldNotify ? "(and notify)." : "");
 			});
 
-			log.debug("taskList after completion: {}", taskList);
 			setRSProfileTasks(taskList);
 		}
 	}

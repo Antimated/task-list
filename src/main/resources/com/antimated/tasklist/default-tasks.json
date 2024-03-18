@@ -28,7 +28,7 @@
   },
   {
 	"description": "Get level 40 in any skill",
-	"tier": "EASY",
+	"tier": "MEDIUM",
 	"requirement": {
 	  "type": "AnySkillLevelRequirement",
 	  "level": 40
@@ -55,7 +55,7 @@
   },
   {
 	"description": "Get level 70 in any skill",
-	"tier": "MEDIUM",
+	"tier": "HARD",
 	"requirement": {
 	  "type": "AnySkillLevelRequirement",
 	  "level": 70
@@ -73,7 +73,7 @@
   },
   {
 	"description": "Get level 90 in any skill",
-	"tier": "ELITE",
+	"tier": "MASTER",
 	"requirement": {
 	  "type": "AnySkillLevelRequirement",
 	  "level": 90
@@ -82,9 +82,99 @@
   },
   {
 	"description": "Get level 99 in any skill",
-	"tier": "ELITE",
+	"tier": "MASTER",
 	"requirement": {
 	  "type": "AnySkillLevelRequirement",
+	  "level": 99
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 10 in all skills",
+	"tier": "EASY",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
+	  "level": 10
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 20 in all skills",
+	"tier": "EASY",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
+	  "level": 20
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 30 in all skills",
+	"tier": "EASY",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
+	  "level": 30
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 40 in all skills",
+	"tier": "MEDIUM",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
+	  "level": 40
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 50 in all skills",
+	"tier": "MEDIUM",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
+	  "level": 50
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 60 in all skills",
+	"tier": "MEDIUM",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
+	  "level": 60
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 70 in all skills",
+	"tier": "HARD",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
+	  "level": 70
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 80 in all skills",
+	"tier": "HARD",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
+	  "level": 80
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 90 in all skills",
+	"tier": "MASTER",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
+	  "level": 90
+	},
+	"completed": false
+  },
+  {
+	"description": "Get level 99 in all skills",
+	"tier": "MASTER",
+	"requirement": {
+	  "type": "AllSkillLevelsRequirement",
 	  "level": 99
 	},
 	"completed": false

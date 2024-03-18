@@ -10,6 +10,9 @@
 - Slayer points: `client.getVarbitValue(Varbits.SLAYER_POINTS) >= points`
 - Slayer task streak: `client.getVarbitValue(Varbits.SLAYER_TASK_STREAK) >= streak`
 - NMZ reward points: `client.getVarpValue(VarPlayer.NMZ_REWARD_POINTS) >= points`
+- Enter the wilderness: `client.getVarpValue(VarPlayer.IN_WILDERNESS) == 0`
+- Upgrade your motherload mine sack: `client.getVarBitValue(VarPlayer.SACK_UPGRADED) == 1`
+
 
 ## Unnamed vars
 - VarBit 4371: Opening of a skill guide. Ranges from 1 to 23 (1 = Attack, 23 = Hunter)

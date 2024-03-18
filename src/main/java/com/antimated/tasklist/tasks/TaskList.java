@@ -11,16 +11,17 @@ public class TaskList extends ArrayList<Task>
 	// Leaving this so I can test with multiple and requirements
 //	public TaskList()
 //	{
+//		add(new Task("Get level 5 in any skill", TaskTier.EASY, new AnySkillLevelRequirement(5), false));
 //		add(new Task("Get level 10 in any skill", TaskTier.EASY, new AnySkillLevelRequirement(10), false));
 //		add(new Task("Get level 20 in any skill", TaskTier.EASY, new AnySkillLevelRequirement(20), false));
-//		add(new Task("Get level 30 in any skill", TaskTier.EASY, new AnySkillLevelRequirement(30), false));
-//		add(new Task("Get level 40 in any skill", TaskTier.EASY, new AnySkillLevelRequirement(40), false));
-//		add(new Task("Get level 50 in any skill", TaskTier.MEDIUM, new AnySkillLevelRequirement(50), false));
-//		add(new Task("Get level 60 in any skill", TaskTier.MEDIUM, new AnySkillLevelRequirement(60), false));
-//		add(new Task("Get level 70 in any skill", TaskTier.MEDIUM, new AnySkillLevelRequirement(70), false));
-//		add(new Task("Get level 80 in any skill", TaskTier.HARD, new AnySkillLevelRequirement(80), false));
-//		add(new Task("Get level 90 in any skill", TaskTier.ELITE, new AnySkillLevelRequirement(90), false));
-//		add(new Task("Get level 99 in any skill", TaskTier.ELITE, new AnySkillLevelRequirement(99), false));
+//		add(new Task("Get level 30 in any skill", TaskTier.MEDIUM, new AnySkillLevelRequirement(30), false));
+//		add(new Task("Get level 40 in any skill", TaskTier.MEDIUM, new AnySkillLevelRequirement(40), false));
+//		add(new Task("Get level 50 in any skill", TaskTier.HARD, new AnySkillLevelRequirement(50), false));
+//		add(new Task("Get level 60 in any skill", TaskTier.HARD, new AnySkillLevelRequirement(60), false));
+//		add(new Task("Get level 70 in any skill", TaskTier.ELITE, new AnySkillLevelRequirement(70), false));
+//		add(new Task("Get level 80 in any skill", TaskTier.ELITE, new AnySkillLevelRequirement(80), false));
+//		add(new Task("Get level 90 in any skill", TaskTier.MASTER, new AnySkillLevelRequirement(90), false));
+//		add(new Task("Get level 99 in any skill", TaskTier.MASTER, new AnySkillLevelRequirement(99), false));
 //		add(new Task("Use the Piety prayer", TaskTier.ELITE, new PrayerRequirement(Prayer.PIETY), false));
 //		add(new Task("Use Chivalry or Piety prayer", TaskTier.ELITE, new OrRequirement(
 //			new PrayerRequirement(Prayer.PIETY),
@@ -53,5 +54,12 @@ public class TaskList extends ArrayList<Task>
 		return stream()
 			.filter(task -> task.isCompleted() == isCompleted)
 			.collect(Collectors.toCollection(TaskList::new));
+	}
+	
+	public Task getTaskByDescription(String description) {
+		return this.stream()
+			.filter(task -> task.getDescription().equals(description))
+			.findFirst()
+			.orElse(null);
 	}
 }

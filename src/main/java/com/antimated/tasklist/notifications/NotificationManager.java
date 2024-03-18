@@ -7,7 +7,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
-import net.runelite.api.GameState;
 import net.runelite.api.WidgetNode;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
@@ -48,12 +47,17 @@ public class NotificationManager
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged gameStateChanged)
 	{
-		// Clear notifications when on login screen
-		if (gameStateChanged.getGameState() != GameState.LOGGED_IN)
-		{
-			clearNotifications();
-		}
 
+		switch (gameStateChanged.getGameState())
+		{
+			case HOPPING:
+			case LOGGING_IN:
+			case LOGIN_SCREEN:
+			case LOGIN_SCREEN_AUTHENTICATOR:
+			case CONNECTION_LOST:
+				clearNotifications();
+				break;
+		}
 	}
 
 	public void startUp()

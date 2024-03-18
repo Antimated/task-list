@@ -22,7 +22,7 @@ public class AnySkillXpRequirement implements Requirement
 		for (Skill skill : Skill.values())
 		{
 			// Ignore hitpoints skill when experience is equal or below the xp for lvl 10
-			if (skill.equals(Skill.HITPOINTS) && xp < Experience.getXpForLevel(10))
+			if (skill.equals(Skill.HITPOINTS) && xp <= Experience.getXpForLevel(10))
 			{
 				continue;
 			}

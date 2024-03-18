@@ -2,13 +2,19 @@ package com.antimated.tasklist;
 
 import com.antimated.tasklist.notifications.NotificationManager;
 import com.antimated.tasklist.tasks.TaskListManager;
+import com.google.common.primitives.Ints;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 import javax.inject.Named;
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.api.Client;
+import net.runelite.api.Experience;
+import net.runelite.api.Skill;
 import net.runelite.api.events.CommandExecuted;
+import net.runelite.api.events.StatChanged;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
@@ -34,6 +40,12 @@ public class TaskListPlugin extends Plugin
 
 	@Inject
 	private ClientThread clientThread;
+
+	@Inject
+	private EventBus eventBus;
+
+	@Inject
+	private Client client;
 
 	@Inject
 	@Named("developerMode")
@@ -84,6 +96,37 @@ public class TaskListPlugin extends Plugin
 					taskListManager.setRSProfileTasks(null);
 					taskListManager.loginFlag = true;
 
+					break;
+
+				case "setstats":
+
+					for (Skill skill : Skill.values())
+					{
+						int level = Integer.parseInt(args[0]);
+
+						if (skill == Skill.HITPOINTS && level < 10)
+						{
+							level = 10;
+						}
+
+
+						level = Ints.constrainToRange(level, 1, Experience.MAX_REAL_LEVEL);
+						int xp = Experience.getXpForLevel(level);
+
+						client.getBoostedSkillLevels()[skill.ordinal()] = level;
+						client.getRealSkillLevels()[skill.ordinal()] = level;
+						client.getSkillExperiences()[skill.ordinal()] = xp;
+
+						client.queueChangedSkill(skill);
+
+						StatChanged statChanged = new StatChanged(
+							skill,
+							xp,
+							level,
+							level
+						);
+						eventBus.post(statChanged);
+					}
 					break;
 			}
 		}
