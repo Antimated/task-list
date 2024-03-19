@@ -3,17 +3,27 @@ package com.antimated.tasklist.tasks;
 import com.antimated.tasklist.TaskListConfig;
 import com.antimated.tasklist.TaskListPlugin;
 import com.antimated.tasklist.notifications.NotificationManager;
+import com.antimated.tasklist.requirements.AnySkillLevelRequirement;
+import com.antimated.tasklist.requirements.BaseSkillLevelRequirement;
+import com.antimated.tasklist.requirements.CombatLevelRequirement;
+import com.antimated.tasklist.requirements.SkillLevelRequirement;
+import com.antimated.tasklist.requirements.SkillXpRequirement;
+import com.antimated.tasklist.requirements.TotalLevelRequirement;
 import com.antimated.tasklist.util.Util;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.Experience;
 import net.runelite.api.GameState;
+import net.runelite.api.Skill;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.client.callback.ClientThread;
@@ -90,10 +100,162 @@ public class TaskListManager
 			taskList = loadTaskList();
 
 			completeSatisfiableTasks(false);
+
+			//createDefaultTasks();
 		}
 
 		// Every game tick, check for completable tasks
 		completeSatisfiableTasks(true);
+	}
+
+	private void createDefaultTasks()
+	{
+		TaskList tasks = new TaskList();
+
+		// Any level tasks
+		Map<Integer, TaskTier> ANY_LEVEL_TASKS = ImmutableMap.<Integer, TaskTier>builder()
+			.put(2, TaskTier.EASY) // When level = 2 -> Level Up instead of Level 2
+			.put(5, TaskTier.EASY)
+			.put(10, TaskTier.EASY)
+			.put(20, TaskTier.EASY)
+			.put(30, TaskTier.MEDIUM)
+			.put(40, TaskTier.MEDIUM)
+			.put(50, TaskTier.MEDIUM)
+			.put(60, TaskTier.HARD)
+			.put(70, TaskTier.HARD)
+			.put(80, TaskTier.HARD)
+			.put(90, TaskTier.ELITE)
+			.put(95, TaskTier.ELITE)
+			.put(99, TaskTier.MASTER)
+			.build();
+
+		for (Map.Entry<Integer, TaskTier> entry : ANY_LEVEL_TASKS.entrySet())
+		{
+			int level = entry.getKey();
+			TaskTier tier = entry.getValue();
+			AnySkillLevelRequirement requirement = new AnySkillLevelRequirement(level);
+			String description = "Achieve your First Level " + (level == 2 ? "Up" : level);
+			boolean completed = requirement.satisfiesRequirement(client);
+
+			tasks.add(new Task(description, tier, requirement, completed));
+		}
+
+		// Base level tasks
+		Map<Integer, TaskTier> BASE_LEVEL_TASKS = ImmutableMap.<Integer, TaskTier>builder()
+			.put(5, TaskTier.EASY)
+			.put(10, TaskTier.EASY)
+			.put(20, TaskTier.EASY)
+			.put(30, TaskTier.MEDIUM)
+			.put(40, TaskTier.MEDIUM)
+			.put(50, TaskTier.MEDIUM)
+			.put(60, TaskTier.HARD)
+			.put(70, TaskTier.HARD)
+			.put(80, TaskTier.ELITE)
+			.put(90, TaskTier.ELITE)
+			.build();
+
+		for (Map.Entry<Integer, TaskTier> entry : BASE_LEVEL_TASKS.entrySet())
+		{
+			int level = entry.getKey();
+			TaskTier tier = entry.getValue();
+			BaseSkillLevelRequirement requirement = new BaseSkillLevelRequirement(level);
+			String description = "Reach Base Level " + level;
+			boolean completed = requirement.satisfiesRequirement(client);
+
+			tasks.add(new Task(description, tier, requirement, completed));
+		}
+
+		// Level 99 tasks
+		for (Skill skill : Skill.values())
+		{
+			// Level 99
+			int level = Experience.MAX_REAL_LEVEL;
+			SkillLevelRequirement requirement = new SkillLevelRequirement(skill, level);
+			String description = "Reach Level " + level + " " + skill.getName();
+			boolean completed = requirement.satisfiesRequirement(client);
+
+			tasks.add(new Task(description, TaskTier.MASTER, requirement, completed));
+		}
+
+
+		Map<Integer, TaskTier> SKILL_XP_TASKS = ImmutableMap.<Integer, TaskTier>builder()
+			.put(25_000_000, TaskTier.ELITE)
+			.put(35_000_000, TaskTier.ELITE)
+			.put(50_000_000, TaskTier.ELITE)
+			.put(100_000_000, TaskTier.MASTER)
+			.put(200_000_000, TaskTier.MASTER)
+			.build();
+
+
+		for (Skill skill : Skill.values())
+		{
+			for (Map.Entry<Integer, TaskTier> entry : SKILL_XP_TASKS.entrySet())
+			{
+				int xp = entry.getKey();
+				TaskTier tier = entry.getValue();
+				SkillXpRequirement requirement = new SkillXpRequirement(skill, xp);
+				String description = "Obtain " + (xp / 1_000_000) + " Million " + skill.getName() + " XP";
+				boolean completed = requirement.satisfiesRequirement(client);
+
+				tasks.add(new Task(description, tier, requirement, completed));
+			}
+		}
+
+		Map<Integer, TaskTier> TOTAL_LEVEL_TASKS = ImmutableMap.<Integer, TaskTier>builder()
+			.put(100, TaskTier.EASY)
+			.put(250, TaskTier.EASY)
+			.put(500, TaskTier.EASY)
+			.put(750, TaskTier.MEDIUM)
+			.put(1000, TaskTier.MEDIUM)
+			.put(1250, TaskTier.MEDIUM)
+			.put(1500, TaskTier.HARD)
+			.put(1750, TaskTier.HARD)
+			.put(2000, TaskTier.ELITE)
+			.put(2100, TaskTier.ELITE)
+			.put(2200, TaskTier.ELITE)
+			.put(2277, TaskTier.MASTER)
+			.build();
+
+		for (Map.Entry<Integer, TaskTier> entry : TOTAL_LEVEL_TASKS.entrySet())
+		{
+			int level = entry.getKey();
+			TaskTier tier = entry.getValue();
+			TotalLevelRequirement requirement = new TotalLevelRequirement(level);
+			String description = "Reach Total Level " + level;
+			boolean completed = requirement.satisfiesRequirement(client);
+
+			tasks.add(new Task(description, tier, requirement, completed));
+		}
+
+		Map<Integer, TaskTier> COMBAT_LEVEL_TASKS = ImmutableMap.<Integer, TaskTier>builder()
+			.put(10, TaskTier.EASY)
+			.put(25, TaskTier.EASY)
+			.put(50, TaskTier.MEDIUM)
+			.put(75, TaskTier.MEDIUM)
+			.put(100, TaskTier.HARD)
+			.put(110, TaskTier.HARD)
+			.put(120, TaskTier.ELITE)
+			.put(126, TaskTier.ELITE)
+			.build();
+
+		for (Map.Entry<Integer, TaskTier> entry : COMBAT_LEVEL_TASKS.entrySet())
+		{
+			int level = entry.getKey();
+			TaskTier tier = entry.getValue();
+			CombatLevelRequirement requirement = new CombatLevelRequirement(level);
+			String description = "Reach Combat Level " + level;
+			boolean completed = requirement.satisfiesRequirement(client);
+
+			tasks.add(new Task(description, tier, requirement, completed));
+		}
+
+
+		for (Task task : tasks)
+		{
+			log.debug("Task: {}", task);
+		}
+
+		log.debug("TaskJSON: {}", gson.toJson(tasks, TaskListConfig.TASK_LIST_TYPE));
 	}
 
 	/**

@@ -91,6 +91,10 @@ public class TaskListPlugin extends Plugin
 
 					break;
 
+				case "clear":
+					notificationManager.clearNotifications();
+					break;
+
 				// Reset tasks and set loginFlag to true so tasks get loaded in again
 				case "reset":
 					taskListManager.setRSProfileTasks(null);

@@ -75,8 +75,11 @@ public class NotificationManager
 
 	public void addNotification(String title, String text)
 	{
-		Notification notification = new Notification(title, text, -1);
-		notifications.offer(notification);
+		synchronized (notifications)
+		{
+			Notification notification = new Notification(title, text, -1);
+			notifications.offer(notification);
+		}
 	}
 
 	public void addNotification(Task task)
@@ -154,8 +157,9 @@ public class NotificationManager
 	/**
 	 * Clears the current list of notifications and makes sure the processing notifications state is set to false
 	 */
-	private void clearNotifications()
+	public void clearNotifications()
 	{
 		notifications.clear();
+		log.debug("Clearing notifications");
 	}
 }
