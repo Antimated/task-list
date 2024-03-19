@@ -93,7 +93,7 @@
 	"description": "Get level 10 in all skills",
 	"tier": "EASY",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 10
 	},
 	"completed": false
@@ -102,7 +102,7 @@
 	"description": "Get level 20 in all skills",
 	"tier": "EASY",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 20
 	},
 	"completed": false
@@ -111,7 +111,7 @@
 	"description": "Get level 30 in all skills",
 	"tier": "EASY",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 30
 	},
 	"completed": false
@@ -120,7 +120,7 @@
 	"description": "Get level 40 in all skills",
 	"tier": "MEDIUM",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 40
 	},
 	"completed": false
@@ -129,7 +129,7 @@
 	"description": "Get level 50 in all skills",
 	"tier": "MEDIUM",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 50
 	},
 	"completed": false
@@ -138,7 +138,7 @@
 	"description": "Get level 60 in all skills",
 	"tier": "MEDIUM",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 60
 	},
 	"completed": false
@@ -147,7 +147,7 @@
 	"description": "Get level 70 in all skills",
 	"tier": "HARD",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 70
 	},
 	"completed": false
@@ -156,7 +156,7 @@
 	"description": "Get level 80 in all skills",
 	"tier": "HARD",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 80
 	},
 	"completed": false
@@ -165,7 +165,7 @@
 	"description": "Get level 90 in all skills",
 	"tier": "MASTER",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 90
 	},
 	"completed": false
@@ -174,7 +174,7 @@
 	"description": "Get level 99 in all skills",
 	"tier": "MASTER",
 	"requirement": {
-	  "type": "AllSkillLevelsRequirement",
+	  "type": "BaseSkillLevelRequirement",
 	  "level": 99
 	},
 	"completed": false

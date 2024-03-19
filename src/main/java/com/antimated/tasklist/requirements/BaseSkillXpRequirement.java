@@ -5,29 +5,29 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
+import net.runelite.api.Experience;
 import net.runelite.api.Skill;
 
 @Slf4j
 @Getter
 @RequiredArgsConstructor
 @ToString
-public class AllSkillLevelsRequirement implements Requirement
+public class BaseSkillXpRequirement implements Requirement
 {
-	private final int level;
+	private final int xp;
 
 	@Override
 	public boolean satisfiesRequirement(Client client)
 	{
 		for (Skill skill : Skill.values())
 		{
-			// Ignore hitpoints as the minimum level for hitpoints is level 10
-			// else not all skill requirement could be completed from lvl 1 - 9
-			if (skill.equals(Skill.HITPOINTS) && level < 10)
+			// Ignore hitpoints skill when experience is below the xp for lvl 10
+			if (skill.equals(Skill.HITPOINTS) && xp < Experience.getXpForLevel(10))
 			{
 				continue;
 			}
 
-			if (client.getRealSkillLevel(skill) < level)
+			if (client.getSkillExperience(skill) < xp)
 			{
 				return false;
 			}

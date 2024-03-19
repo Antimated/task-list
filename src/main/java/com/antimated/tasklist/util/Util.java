@@ -1,7 +1,7 @@
 package com.antimated.tasklist.util;
 
-import com.antimated.tasklist.requirements.AllSkillLevelsRequirement;
-import com.antimated.tasklist.requirements.AllSkillXpRequirement;
+import com.antimated.tasklist.requirements.BaseSkillLevelRequirement;
+import com.antimated.tasklist.requirements.BaseSkillXpRequirement;
 import com.antimated.tasklist.requirements.AndRequirement;
 import com.antimated.tasklist.requirements.AnySkillLevelRequirement;
 import com.antimated.tasklist.requirements.AnySkillXpRequirement;
@@ -49,8 +49,8 @@ public class Util
 	{
 		return RuntimeTypeAdapterFactory
 			.of(Requirement.class, "type")
-			.registerSubtype(AllSkillLevelsRequirement.class)
-			.registerSubtype(AllSkillXpRequirement.class)
+			.registerSubtype(BaseSkillLevelRequirement.class)
+			.registerSubtype(BaseSkillXpRequirement.class)
 			.registerSubtype(AndRequirement.class)
 			.registerSubtype(AnySkillLevelRequirement.class)
 			.registerSubtype(AnySkillXpRequirement.class)
