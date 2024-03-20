@@ -17,11 +17,11 @@ public class Task
 	@Setter
 	private boolean completed;
 
-	public Task(String description, TaskTier tier, Requirement requirement, boolean completed)
+	public Task(String description, TaskTier tier, Requirement requirement)
 	{
 		this.description = description;
 		this.tier = tier;
 		this.requirement = requirement;
-		this.completed = completed;
+		this.completed = false;
 	}
 }

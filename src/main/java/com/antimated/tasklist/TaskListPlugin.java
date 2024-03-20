@@ -97,7 +97,7 @@ public class TaskListPlugin extends Plugin
 
 				// Reset tasks and set loginFlag to true so tasks get loaded in again
 				case "reset":
-					taskListManager.setRSProfileTasks(null);
+					//taskListManager.setRSProfileTasks(null);
 					taskListManager.loginFlag = true;
 
 					break;
