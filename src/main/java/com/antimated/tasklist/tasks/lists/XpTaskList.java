@@ -151,5 +151,7 @@ public class XpTaskList extends TaskList
 		add("Obtain 50 Million Construction XP", TaskTier.ELITE, new SkillXpRequirement(Skill.CONSTRUCTION, 50000000));
 		add("Obtain 100 Million Construction XP", TaskTier.MASTER, new SkillXpRequirement(Skill.CONSTRUCTION, 100000000));
 		add("Obtain 200 Million Construction XP", TaskTier.MASTER, new SkillXpRequirement(Skill.CONSTRUCTION, 200000000));
+
+		log.debug("Loaded {} tasks...", getTasks().size());
 	}
 }

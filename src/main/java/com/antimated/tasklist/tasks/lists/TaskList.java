@@ -19,7 +19,6 @@ public abstract class TaskList
 	public TaskList(String name)
 	{
 		this.name = name;
-		log.debug("Task list loaded '{}'", name);
 	}
 
 	public void add(String description, TaskTier tier, Requirement requirement)

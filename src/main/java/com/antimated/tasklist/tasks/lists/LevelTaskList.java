@@ -67,5 +67,7 @@ public class LevelTaskList extends TaskList
 		add("Reach Level 99 Runecraft", TaskTier.MASTER, new SkillLevelRequirement(Skill.RUNECRAFT, 99));
 		add("Reach Level 99 Hunter", TaskTier.MASTER, new SkillLevelRequirement(Skill.HUNTER, 99));
 		add("Reach Level 99 Construction", TaskTier.MASTER, new SkillLevelRequirement(Skill.CONSTRUCTION, 99));
+
+		log.debug("Loaded {} tasks...", getTasks().size());
 	}
 }
