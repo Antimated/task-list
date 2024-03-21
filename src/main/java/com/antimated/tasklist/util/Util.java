@@ -1,10 +1,10 @@
 package com.antimated.tasklist.util;
 
-import com.antimated.tasklist.requirements.BaseSkillLevelRequirement;
-import com.antimated.tasklist.requirements.BaseSkillXpRequirement;
 import com.antimated.tasklist.requirements.AndRequirement;
 import com.antimated.tasklist.requirements.AnySkillLevelRequirement;
 import com.antimated.tasklist.requirements.AnySkillXpRequirement;
+import com.antimated.tasklist.requirements.BaseSkillLevelRequirement;
+import com.antimated.tasklist.requirements.BaseSkillXpRequirement;
 import com.antimated.tasklist.requirements.CombatLevelRequirement;
 import com.antimated.tasklist.requirements.EquipmentRequirement;
 import com.antimated.tasklist.requirements.OrRequirement;
@@ -16,6 +16,9 @@ import com.antimated.tasklist.requirements.SkillLevelRequirement;
 import com.antimated.tasklist.requirements.SkillXpRequirement;
 import com.antimated.tasklist.requirements.TotalLevelRequirement;
 import com.antimated.tasklist.requirements.TotalXpRequirement;
+import com.antimated.tasklist.tasks.lists.LevelTaskList;
+import com.antimated.tasklist.tasks.lists.TaskList;
+import com.antimated.tasklist.tasks.lists.XpTaskList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +51,7 @@ public class Util
 	public static RuntimeTypeAdapterFactory<Requirement> requirementAdapterFactory()
 	{
 		return RuntimeTypeAdapterFactory
-			.of(Requirement.class, "type")
+			.of(Requirement.class)
 			.registerSubtype(BaseSkillLevelRequirement.class)
 			.registerSubtype(BaseSkillXpRequirement.class)
 			.registerSubtype(AndRequirement.class)
@@ -65,5 +68,13 @@ public class Util
 			.registerSubtype(TotalLevelRequirement.class)
 			.registerSubtype(TotalXpRequirement.class);
 
+	}
+
+	public static RuntimeTypeAdapterFactory<TaskList> taskListAdapterFactory()
+	{
+		return RuntimeTypeAdapterFactory
+			.of(TaskList.class)
+			.registerSubtype(LevelTaskList.class)
+			.registerSubtype(XpTaskList.class);
 	}
 }
