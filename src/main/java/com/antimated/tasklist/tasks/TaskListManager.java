@@ -2,6 +2,7 @@ package com.antimated.tasklist.tasks;
 
 import com.antimated.tasklist.TaskListConfig;
 import com.antimated.tasklist.notifications.NotificationManager;
+import com.antimated.tasklist.tasks.lists.GenericTaskList;
 import com.antimated.tasklist.tasks.lists.LevelTaskList;
 import com.antimated.tasklist.tasks.lists.TaskList;
 import com.antimated.tasklist.tasks.lists.XpTaskList;
@@ -54,7 +55,7 @@ public class TaskListManager
 		eventBus.register(this);
 		gson = new GsonBuilder()
 			.registerTypeAdapterFactory(Util.requirementAdapterFactory())
-			.registerTypeAdapterFactory(Util.taskListAdapterFactory())
+//			.registerTypeAdapterFactory(Util.taskListAdapterFactory())
 			.create();
 		loginFlag = client.getGameState() == GameState.LOGGED_IN;
 	}
@@ -62,8 +63,8 @@ public class TaskListManager
 	public void shutDown()
 	{
 		eventBus.unregister(this);
-		clearTaskLists();
 		loginFlag = false;
+		clearTaskLists();
 	}
 
 	@Subscribe
@@ -90,6 +91,7 @@ public class TaskListManager
 
 		if (loginFlag)
 		{
+			loginFlag = false;
 			loadTaskLists();
 		}
 
@@ -97,8 +99,128 @@ public class TaskListManager
 		completeTasks(true);
 	}
 
+
+	public void loadTaskLists()
+	{
+		List<TaskList> savedTaskLists = getSavedTaskLists();
+		List<TaskList> defaultTaskLists = getDefaultTaskLists();
+
+		if (!savedTaskLists.isEmpty())
+		{
+			log.info("Saved task lists found");
+			// Saved tasks found, start up patch task lists.
+			List<TaskList> patchedTaskLists = new ArrayList<>();
+
+			// Loop through default task lists
+			for (TaskList defaultTaskList : defaultTaskLists)
+			{
+				TaskList savedTaskList = findTaskList(savedTaskLists, defaultTaskList);
+				GenericTaskList patchedTaskList = new GenericTaskList(defaultTaskList.getName());
+
+				// We found a TaskList with the same name
+				if (savedTaskList != null)
+				{
+					log.debug("Patching task list '{}'", defaultTaskList.getName());
+
+					for (Task task : defaultTaskList.getTasks())
+					{
+						Task foundTask = findTask(savedTaskList, task);
+
+						if (foundTask != null)
+						{
+							patchedTaskList.add(foundTask);
+							//log.debug("Task '{}' found in saved list. Patched into '{}'", task.getDescription(), defaultTaskList.getName());
+						}
+						else
+						{
+							patchedTaskList.add(task);
+							log.debug("Task '{}' not found in saved list. Using default from '{}'", task.getDescription(), defaultTaskList.getName());
+						}
+					}
+
+					patchedTaskLists.add(patchedTaskList);
+				}
+				else
+				{
+					log.debug("No saved task list found for '{}'. Using default task list.", defaultTaskList.getName());
+
+					for (Task task : defaultTaskList.getTasks())
+					{
+						patchedTaskList.add(task);
+						//log.debug("Task '{}' from default added to '{}'", task.getDescription(), defaultTaskList.getName());
+					}
+
+					patchedTaskLists.add(patchedTaskList);
+				}
+			}
+
+			taskLists = patchedTaskLists;
+			log.info("Task lists patched successfully.");
+		}
+		else
+		{
+			taskLists = defaultTaskLists;
+			log.info("No saved task lists found. Using default task lists.");
+
+		}
+
+		completeTasks(false);
+		saveTaskLists(taskLists);
+	}
+
+	private TaskList findTaskList(List<TaskList> lists, TaskList list)
+	{
+		for (TaskList l : lists)
+		{
+			if (l.getName().equals(list.getName()))
+			{
+				return l;
+			}
+		}
+		return null;
+	}
+
+	private Task findTask(TaskList list, Task task)
+	{
+		for (Task t : list.getTasks())
+		{
+			if (t.getDescription().equals(task.getDescription()))
+			{
+				return t;
+			}
+		}
+
+		return null;
+	}
+
+	private List<TaskList> getSavedTaskLists()
+	{
+		String lists = configManager.getRSProfileConfiguration(TaskListConfig.GROUP_NAME, TaskListConfig.TASK_LISTS_KEY, String.class);
+
+		if (lists != null)
+		{
+			return gson.fromJson(lists, TaskListConfig.TASK_LIST_TYPE);
+		}
+
+		return new ArrayList<>();
+	}
+
+	private List<TaskList> getDefaultTaskLists()
+	{
+		List<TaskList> lists = new ArrayList<>();
+
+		lists.add(new LevelTaskList());
+		lists.add(new XpTaskList());
+
+		return lists;
+	}
+
+
 	private void completeTasks(boolean shouldNotify)
 	{
+		// Only save when tasks have been completed
+		boolean shouldSave = false;
+
 		for (TaskList taskList : taskLists)
 		{
 			List<Task> completableTasks = taskList.getTasks()
@@ -122,9 +244,15 @@ public class TaskListManager
 					log.debug(("Completing task: {} {}").trim(), task.getDescription(), shouldNotify ? "(and notify)." : "");
 				}
 
-				// Save task lists on RS-profile
-				setSavedTaskLists(taskLists);
+				shouldSave = true;
 			}
+		}
+
+		if (shouldSave)
+		{
+			// Save task lists on RS-profile
+			log.debug("Tasks have been completed so we should save.");
+			saveTaskLists(taskLists);
 		}
 	}
 
@@ -136,7 +264,7 @@ public class TaskListManager
 		}
 	}
 
-	public void setSavedTaskLists(List<TaskList> lists)
+	public void saveTaskLists(List<TaskList> lists)
 	{
 		if (lists != null)
 		{
@@ -149,32 +277,5 @@ public class TaskListManager
 			log.debug("Clearing task lists from RS-profile");
 			configManager.unsetRSProfileConfiguration(TaskListConfig.GROUP_NAME, TaskListConfig.TASK_LISTS_KEY);
 		}
-	}
-
-
-	public void loadTaskLists()
-	{
-		// User logged in, reset flag to false so loading only happens first gametick.
-		loginFlag = false;
-
-		// Fetch tasks for RS-profile.
-		String tasks = configManager.getRSProfileConfiguration(TaskListConfig.GROUP_NAME, TaskListConfig.TASK_LISTS_KEY, String.class);
-
-		if (tasks != null)
-		{
-			log.debug("RS-profile tasks found, loading them...");
-			taskLists = gson.fromJson(tasks, TaskListConfig.TASK_LIST_TYPE);
-		}
-		else
-		{
-			log.debug("No RS-profile tasks found, loading default task lists");
-			taskLists = new ArrayList<>();
-			taskLists.add(new LevelTaskList());
-			taskLists.add(new XpTaskList());
-		}
-
-		// Auto complete loaded tasks if possible (whether RS-profile or default)
-		// but don't notify player
-		completeTasks(false);
 	}
 }

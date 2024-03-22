@@ -2,12 +2,10 @@ package com.antimated.tasklist.tasks.lists;
 
 import com.antimated.tasklist.requirements.SkillXpRequirement;
 import com.antimated.tasklist.tasks.TaskTier;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Skill;
 
 @Slf4j
-@ToString
 public class XpTaskList extends TaskList
 {
 	public XpTaskList()
@@ -151,7 +149,5 @@ public class XpTaskList extends TaskList
 		add("Obtain 50 Million Construction XP", TaskTier.ELITE, new SkillXpRequirement(Skill.CONSTRUCTION, 50000000));
 		add("Obtain 100 Million Construction XP", TaskTier.MASTER, new SkillXpRequirement(Skill.CONSTRUCTION, 100000000));
 		add("Obtain 200 Million Construction XP", TaskTier.MASTER, new SkillXpRequirement(Skill.CONSTRUCTION, 200000000));
-
-		log.debug("Loaded {} tasks...", getTasks().size());
 	}
 }

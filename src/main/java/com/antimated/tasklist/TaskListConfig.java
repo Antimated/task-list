@@ -1,6 +1,6 @@
 package com.antimated.tasklist;
 
-import com.antimated.tasklist.tasks.lists.TaskList;
+import com.antimated.tasklist.tasks.lists.GenericTaskList;
 import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -16,7 +16,7 @@ public interface TaskListConfig extends Config
 	String TASK_LISTS_KEY = "lists";
 
 	// @formatter:off
-	Type TASK_LIST_TYPE = new TypeToken<List<TaskList>>() {}.getType();
+	Type TASK_LIST_TYPE = new TypeToken<List<GenericTaskList>>() {}.getType();
 	// @formatter:on
 
 	@ConfigItem(

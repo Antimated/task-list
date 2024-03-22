@@ -4,12 +4,10 @@ import com.antimated.tasklist.requirements.AnySkillLevelRequirement;
 import com.antimated.tasklist.requirements.BaseSkillLevelRequirement;
 import com.antimated.tasklist.requirements.SkillLevelRequirement;
 import com.antimated.tasklist.tasks.TaskTier;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Skill;
 
 @Slf4j
-@ToString
 public class LevelTaskList extends TaskList
 {
 	public LevelTaskList()
@@ -67,7 +65,5 @@ public class LevelTaskList extends TaskList
 		add("Reach Level 99 Runecraft", TaskTier.MASTER, new SkillLevelRequirement(Skill.RUNECRAFT, 99));
 		add("Reach Level 99 Hunter", TaskTier.MASTER, new SkillLevelRequirement(Skill.HUNTER, 99));
 		add("Reach Level 99 Construction", TaskTier.MASTER, new SkillLevelRequirement(Skill.CONSTRUCTION, 99));
-
-		log.debug("Loaded {} tasks...", getTasks().size());
 	}
 }
