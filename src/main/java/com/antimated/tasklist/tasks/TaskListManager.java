@@ -230,7 +230,7 @@ public class TaskListManager
 
 			if (!completableTasks.isEmpty())
 			{
-				log.debug("Found completable tasks in '{}'...", taskList.getName());
+				log.debug("Found {} completable tasks in '{}'...", completableTasks.size(), taskList.getName());
 
 				for (Task task : completableTasks)
 				{
@@ -241,7 +241,7 @@ public class TaskListManager
 						notificationManager.addNotification(task);
 					}
 
-					log.debug(("Completing task: {} {}").trim(), task.getDescription(), shouldNotify ? "(and notify)." : "");
+					//log.debug(("Completing task: {} {}").trim(), task.getDescription(), shouldNotify ? "(and notify)." : "");
 				}
 
 				shouldSave = true;
